@@ -106,8 +106,6 @@ model.add(Dropout(0.5))
 model.add(Dense(len(le.classes_)))
 model.add(Activation("softmax"))
 
-
-
 model.compile(loss="binary_crossentropy", optimizer=opt,
 			  metrics=["accuracy"])
 
