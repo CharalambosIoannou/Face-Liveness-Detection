@@ -31,7 +31,7 @@ class LivenessNet:
 		model.add(Dropout(0.25))
 
 		# second CONV => RELU => CONV => RELU => POOL layer set
-		model.add(Conv2D(32, (3, 3), padding="same"))
+		model.add(Conv2D(32, (3, 3), padding="same")) # 32 is feature maps. Memorizing different patters
 		model.add(Activation("relu"))
 		model.add(BatchNormalization(axis=chanDim))
 		model.add(Conv2D(32, (3, 3), padding="same"))

@@ -38,7 +38,7 @@ NAME = "Live vs Fake photos" + str(int(time.time()))
 tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
 
 # grab the list of images in our dataset directory, then initialize
-# the list of data (i.e., images) and class images
+# the list of data_features (i.e., images) and class images
 print("[INFO] loading images...")
 data = []
 labels = []
@@ -54,7 +54,7 @@ for label_name in labels1:
 		# print(imagePath)
 		image = cv2.resize(image, (32, 32))
 		
-		# update the data and labels lists, respectively
+		# update the data_features and labels lists, respectively
 		data.append(image)
 		if (label_name == 'ImposterFace'):
 			labels.append(0)
@@ -62,7 +62,7 @@ for label_name in labels1:
 			labels.append(1)
 
 print(len(data))
-# convert the data into a NumPy array, then preprocess it by scaling
+# convert the data_features into a NumPy array, then preprocess it by scaling
 # all pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
 
@@ -74,13 +74,13 @@ labels = np_utils.to_categorical(labels, 2)
 
 
 
-# training data ( trainX ) and training labels ( trainY ).
+# training data_features ( trainX ) and training labels ( trainY ).
 (trainX, testX, trainY, testY) = train_test_split(data, labels,
 												  test_size=0.20, random_state=42)
 
 
 	
-# apply data augmentation, randomly translating, rotating, resizing, etc. images on the fly.
+# apply data_features augmentation, randomly translating, rotating, resizing, etc. images on the fly.
 # enabling our model to generalize better
 aug = ImageDataGenerator(rotation_range=20, zoom_range=0.15,
 						 width_shift_range=0.2, height_shift_range=0.2, shear_range=0.15,
@@ -120,7 +120,7 @@ H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
 
 # evaluate the network
 print("[INFO] evaluating network...")
-predictions = model.predict(testX, batch_size=BS) #TODO rerun file and find mean value and visualize features on a histogram + tsne
+predictions = model.predict(testX, batch_size=BS) #TODO histogram + static evaluation (not real time) Precesion and Recall
 print(classification_report(testY.argmax(axis=1),
 							predictions.argmax(axis=1), target_names=le.classes_))
 
