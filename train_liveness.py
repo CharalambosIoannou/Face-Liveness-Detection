@@ -92,11 +92,11 @@ opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model = LivenessNet.build(width=32, height=32, depth=3,
 						  classes=len(le.classes_))
 
-np.savetxt('feature_extraction/features.csv', model.predict(trainX, batch_size=BS), delimiter=',')
-np.savetxt('feature_extraction/labels.csv', trainY, delimiter=',')
-
-np.savetxt('feature_extraction/features.txt', model.predict(trainX, batch_size=BS), delimiter=',')
-np.savetxt('feature_extraction/labels.txt', trainY, delimiter=',')
+# np.savetxt('feature_extraction/features.csv', model.predict(trainX, batch_size=BS), delimiter=',')
+# np.savetxt('feature_extraction/labels.csv', trainY, delimiter=',')
+#
+# np.savetxt('feature_extraction/features.txt', model.predict(trainX, batch_size=BS), delimiter=',')
+# np.savetxt('feature_extraction/labels.txt', trainY, delimiter=',')
 
 model.add(Activation("relu"))
 model.add(BatchNormalization())
@@ -121,18 +121,41 @@ H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
 # evaluate the network
 print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS) #TODO histogram + static evaluation (not real time) Precesion and Recall
-print(classification_report(testY.argmax(axis=1),
-							predictions.argmax(axis=1), target_names=le.classes_))
+# print(classification_report(testY.argmax(axis=1),predictions.argmax(axis=1), target_names=le.classes_))
 
-# save the network to disk
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
 # model.save('liveness.model')
-model.save('no_glasses_model_with_me.h5')
+model.save('NUAA_dataset.h5')
 
 # save the label encoder to disk
-f = open('no_glasses_pickle_with_me.pickle', "wb")
+f = open('NUAA_dataset.pickle', "wb")
 f.write(pickle.dumps(le))
 f.close()
+
+
+expected = []
+actual = []
+for i in range(0,len(predictions)):
+	preds = predictions[i][0]
+	j = np.argmax(preds)
+	label = le.classes_[j]
+	print(label)
+	expected.append(label)
+
+
+
+for i in range(0,len(testY)):
+	actual.append(int(testY[i][1]))
+
+
+
+from sklearn.metrics import confusion_matrix
+results = confusion_matrix(expected, actual)
+report_1 = classification_report(actual, expected, target_names=['actual' , 'fake'])
+# print("conf: " ,results)
+print("report_1: " ,report_1)
+# save the network to disk
+
 
 # plot the training loss and accuracy
 plt.style.use("ggplot")
