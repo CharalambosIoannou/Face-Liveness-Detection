@@ -27,12 +27,13 @@ from keras.layers.normalization import BatchNormalization
 from keras.layers.core import Activation
 from keras.layers.core import Dropout
 from keras.layers.core import Dense
+from sklearn.metrics import confusion_matrix
 
 # initialize the initial learning rate, batch size, and number of
 # epochs to train for
 INIT_LR = 1e-4
 BS = 10
-EPOCHS = 20
+EPOCHS = 1
 # Define the Keras TensorBoard callback.
 NAME = "Live vs Fake photos" + str(int(time.time()))
 tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
@@ -120,7 +121,7 @@ H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
 
 # evaluate the network
 print("[INFO] evaluating network...")
-predictions = model.predict(testX, batch_size=BS) #TODO histogram + static evaluation (not real time) Precesion and Recall
+predictions = model.predict(testX, batch_size=BS) #TODO look at classification report and dynamic evaluation
 # print(classification_report(testY.argmax(axis=1),predictions.argmax(axis=1), target_names=le.classes_))
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
@@ -133,28 +134,14 @@ f.write(pickle.dumps(le))
 f.close()
 
 
-expected = []
-actual = []
-for i in range(0,len(predictions)):
-	preds = predictions[i][0]
-	j = np.argmax(preds)
-	label = le.classes_[j]
-	print(label)
-	expected.append(label)
-
-
-
-for i in range(0,len(testY)):
-	actual.append(int(testY[i][1]))
-
-
-
-from sklearn.metrics import confusion_matrix
-results = confusion_matrix(expected, actual)
-report_1 = classification_report(actual, expected, target_names=['actual' , 'fake'])
-# print("conf: " ,results)
+actual = model.predict(testX)
+actual = np.argmax(actual, axis=1) # axis 1 = rows, axis 0 = columns
+""" argmax returns the index of the maximum value in each of the rows in the model"""
+results = confusion_matrix(np.argmax(testY, axis=1), actual)
+report_1 = classification_report(np.argmax(testY, axis=1), actual, target_names=['test data' , 'actual'])
+print("conf: " ,results)
 print("report_1: " ,report_1)
-# save the network to disk
+
 
 
 # plot the training loss and accuracy
