@@ -96,7 +96,7 @@ def pca(X=np.array([]), no_dims=50):
         no_dims dimensions.
     """
 
-    print("Preprocessing the data using PCA...")
+    print("Preprocessing the data_features using PCA...")
     (n, d) = X.shape
     X = X - np.tile(np.mean(X, 0), (n, 1))
     (l, M) = np.linalg.eig(np.dot(X.T, X))

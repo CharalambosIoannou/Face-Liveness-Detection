@@ -4,7 +4,8 @@
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
 
-
+import imutils
+from keras.preprocessing.image import img_to_array
 
 matplotlib.use("Agg")
 
@@ -29,14 +30,17 @@ from keras.layers.core import Dropout
 from keras.layers.core import Dense
 from sklearn.metrics import confusion_matrix
 
+
+#%%
 # initialize the initial learning rate, batch size, and number of
 # epochs to train for
 INIT_LR = 1e-4
 BS = 10
-EPOCHS = 1
+EPOCHS = 20
 # Define the Keras TensorBoard callback.
 NAME = "Live vs Fake photos" + str(int(time.time()))
 tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
+
 
 # grab the list of images in our dataset directory, then initialize
 # the list of data_features (i.e., images) and class images
@@ -61,8 +65,9 @@ for label_name in labels1:
 			labels.append(0)
 		else:
 			labels.append(1)
-
+#%% 
 print(len(data))
+#%% 
 # convert the data_features into a NumPy array, then preprocess it by scaling
 # all pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
@@ -83,9 +88,17 @@ labels = np_utils.to_categorical(labels, 2)
 	
 # apply data_features augmentation, randomly translating, rotating, resizing, etc. images on the fly.
 # enabling our model to generalize better
-aug = ImageDataGenerator(rotation_range=20, zoom_range=0.15,
-						 width_shift_range=0.2, height_shift_range=0.2, shear_range=0.15,
-						 horizontal_flip=True, fill_mode="nearest")
+aug = ImageDataGenerator( rescale = 1./255,
+                                   shear_range = 0.2,
+								   width_shift_range=0.2, 
+								   height_shift_range=0.2,
+								   rotation_range=90,
+								   brightness_range=[0.2,1.0],
+								   zoom_range=[0.5,1.0],
+								   featurewise_center=True,
+								  featurewise_std_normalization=True,
+                                   horizontal_flip = True,
+								    fill_mode="nearest")
 
 # initialize the optimizer and model
 print("[INFO] compiling model...")
@@ -96,7 +109,7 @@ model = LivenessNet.build(width=32, height=32, depth=3,
 # np.savetxt('feature_extraction/features.csv', model.predict(trainX, batch_size=BS), delimiter=',')
 # np.savetxt('feature_extraction/labels.csv', trainY, delimiter=',')
 #
-# np.savetxt('feature_extraction/features.txt', model.predict(trainX, batch_size=BS), delimiter=',')
+# np.savetxt('feature_extraction/features.txt', model.predict(trainX, batch_size=BS), zdelimiter=',')
 # np.savetxt('feature_extraction/labels.txt', trainY, delimiter=',')
 
 model.add(Activation("relu"))
@@ -110,14 +123,17 @@ model.add(Activation("softmax"))
 model.compile(loss="binary_crossentropy", optimizer=opt,
 			  metrics=["accuracy"])
 
+model.summary()
+model.save_weights('my_weights.h5')
 
+#%% 
 
 # train the network
 print("[INFO] training network for {} epochs...".format(EPOCHS))
 # fit generator is on infinite look so do steps per epoch to terminate it
 H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
 						validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS,
-						epochs=EPOCHS, callbacks=[tensorboard_callback])
+						epochs=EPOCHS)
 
 # evaluate the network
 print("[INFO] evaluating network...")
@@ -126,19 +142,59 @@ predictions = model.predict(testX, batch_size=BS) #TODO look at classification r
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
 # model.save('liveness.model')
-model.save('NUAA_dataset.h5')
+model.save('1_NUAA_dataset.h5')
 
 # save the label encoder to disk
-f = open('NUAA_dataset.pickle', "wb")
+f = open('1_NUAA_dataset.pickle', "wb")
 f.write(pickle.dumps(le))
 f.close()
+#%%
 
-
+faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+dict = {}
+labels_t = ["ImposterRaw", "ClientRaw"]
+for label_name in labels_t:
+	print('Doing label: ' , label_name)
+	for imagePath in glob.iglob(f'dataset/test_raw/{label_name}/*/*.jpg'):
+			print(imagePath)
+			image = cv2.imread(imagePath)
+			frame = imutils.resize(image, width=600)
+			faces = faceCascade.detectMultiScale(
+			image,
+			scaleFactor=1.3,
+			minNeighbors=3,
+			minSize=(30, 30)
+			)
+			for (x, y, w, h) in faces :
+				cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+				#get pixel locations of the box to extract face
+				roi_color = frame[y :y + h, x :x + w]
+				face = frame[y :y + h, x :x + w]
+				face = cv2.resize(face, (32, 32))
+				face = face.astype("float") / 255.0
+				face = img_to_array(face)
+				face = np.expand_dims(face, axis=0)
+		
+				preds = model.predict(face)[0]
+				j = np.argmax(preds)
+				label = le.classes_[j]
+				if (label == 1):
+					label='real'
+				else:
+					label = 'fake'
+			dict[imagePath] = label
+	
+print(dict)
+import pandas as pd
+df = pd.DataFrame(list(dict.items()), columns=['Filename', 'Prediction'])
+df.to_csv("new_predict.csv",index=False)
+			
 actual = model.predict(testX)
 actual = np.argmax(actual, axis=1) # axis 1 = rows, axis 0 = columns
+
 """ argmax returns the index of the maximum value in each of the rows in the model"""
 results = confusion_matrix(np.argmax(testY, axis=1), actual)
-report_1 = classification_report(np.argmax(testY, axis=1), actual, target_names=['test data' , 'actual'])
+report_1 = classification_report(np.argmax(testY, axis=1), actual, target_names=['actual' , 'expected'])
 print("conf: " ,results)
 print("report_1: " ,report_1)
 
@@ -164,3 +220,4 @@ print("Shape trainX", trainX.shape)
 print("Shape testX", testX.shape)
 print("Shape trainY", trainY.shape)
 print("Shape testY", testY.shape)
+#%% 

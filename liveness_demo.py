@@ -16,19 +16,17 @@ look for domain adaptation algorithm
 """
 
 # wears_glasses = input("Do you wear glasses? Type y or n \n")
-wears_glasses = 'n'
+
+#TODO register user
+# Preliminary definitions (Let X in the training) Experiment part
+# Face occlusion detection
 
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-if (wears_glasses == "n") :
-	print("Loading no_glasses_model")
-	model = load_model('no_glasses_model_with_me.h5')
-	le = pickle.loads(open('no_glasses_pickle_with_me.pickle', "rb").read())
-else :
-	print("Loading glasses_model")
-	model = load_model('dataset/Glasses/glasses_model.h5')
-	le = pickle.loads(open('dataset/Glasses/glasses_pickle.pickle', "rb").read())
+print("Loading model")
+model = load_model('1_NUAA_dataset.h5')
+le = pickle.loads(open('1_NUAA_dataset.pickle', "rb").read())
 
 
 print("Starting camera")
@@ -64,6 +62,10 @@ while True :
 		label = le.classes_[j]
 
 		# draw the label and bounding box on the frame
+		if (label == 1):
+			label='real'
+		else:
+			label = 'fake'
 		label = "{}: {:.4f}".format(label, preds[j])
 		cv2.putText(frame, label, (x, y - 10),
 		            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
