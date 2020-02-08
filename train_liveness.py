@@ -40,28 +40,40 @@ EPOCHS = 20
 # Define the Keras TensorBoard callback.
 NAME = "Live vs Fake photos" + str(int(time.time()))
 tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
-
+faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 # grab the list of images in our dataset directory, then initialize
 # the list of data_features (i.e., images) and class images
 print("[INFO] loading images...")
 data = []
 labels = []
-labels1 = ["ImposterFace", "ClientFace"]
+labels1 = ["ImposterRaw", "ClientRaw"]
 for label_name in labels1:
 	print('Doing label: ' , label_name)
-	for imagePath in glob.iglob(f'dataset/Detectedface/{label_name}/*/*.jpg'):
+	for imagePath in glob.iglob(f'dataset/raw/{label_name}/*/*.jpg'):
 		print(imagePath)
 		# extract the class label from the filename, load the image and
 		# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
 		image = cv2.imread(imagePath)
-		
+		frame = imutils.resize(image, width=600)
+		faces = faceCascade.detectMultiScale(
+		image,
+		scaleFactor=1.3,
+		minNeighbors=3,
+		minSize=(30, 30)
+		)
+		for (x, y, w, h) in faces :
+			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+			#get pixel locations of the box to extract face
+			roi_color = frame[y :y + h, x :x + w]
+			face = frame[y :y + h, x :x + w]
+			face = cv2.resize(face, (32, 32))
 		# print(imagePath)
-		image = cv2.resize(image, (32, 32))
+		
 		
 		# update the data_features and labels lists, respectively
-		data.append(image)
-		if (label_name == 'ImposterFace'):
+		data.append(face)
+		if (label_name == 'ImposterRaw'):
 			labels.append(0)
 		else:
 			labels.append(1)
@@ -150,7 +162,7 @@ f.write(pickle.dumps(le))
 f.close()
 #%%
 
-faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+
 dict = {}
 labels_t = ["ImposterRaw", "ClientRaw"]
 for label_name in labels_t:
