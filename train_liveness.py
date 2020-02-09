@@ -47,33 +47,21 @@ faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontal
 print("[INFO] loading images...")
 data = []
 labels = []
-labels1 = ["ImposterRaw", "ClientRaw"]
+labels1 = ["ImposterFace", "ClientFace"]
 for label_name in labels1:
 	print('Doing label: ' , label_name)
-	for imagePath in glob.iglob(f'dataset/raw/{label_name}/*/*.jpg'):
+	for imagePath in glob.iglob(f'dataset/face_no_mouth/{label_name}/*/*.jpg'):
 		print(imagePath)
 		# extract the class label from the filename, load the image and
 		# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
 		image = cv2.imread(imagePath)
-		frame = imutils.resize(image, width=600)
-		faces = faceCascade.detectMultiScale(
-		image,
-		scaleFactor=1.3,
-		minNeighbors=3,
-		minSize=(30, 30)
-		)
-		for (x, y, w, h) in faces :
-			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-			#get pixel locations of the box to extract face
-			roi_color = frame[y :y + h, x :x + w]
-			face = frame[y :y + h, x :x + w]
-			face = cv2.resize(face, (32, 32))
-		# print(imagePath)
 		
+		# print(imagePath)
+		image = cv2.resize(image, (32, 32))
 		
 		# update the data_features and labels lists, respectively
-		data.append(face)
-		if (label_name == 'ImposterRaw'):
+		data.append(image)
+		if (label_name == 'ImposterFace'):
 			labels.append(0)
 		else:
 			labels.append(1)
@@ -118,11 +106,11 @@ opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model = LivenessNet.build(width=32, height=32, depth=3,
 						  classes=len(le.classes_))
 
-# np.savetxt('feature_extraction/features.csv', model.predict(trainX, batch_size=BS), delimiter=',')
-# np.savetxt('feature_extraction/labels.csv', trainY, delimiter=',')
-#
-# np.savetxt('feature_extraction/features.txt', model.predict(trainX, batch_size=BS), zdelimiter=',')
-# np.savetxt('feature_extraction/labels.txt', trainY, delimiter=',')
+np.savetxt('feature_extraction/features_no_mouth.csv', model.predict(trainX, batch_size=BS), delimiter=',')
+np.savetxt('feature_extraction/labels_no_mouth.csv', trainY, delimiter=',')
+
+np.savetxt('feature_extraction/features_no_mouth.txt', model.predict(trainX, batch_size=BS), delimiter=',')
+np.savetxt('feature_extraction/labels_no_mouth.txt', trainY, delimiter=',')
 
 model.add(Activation("relu"))
 model.add(BatchNormalization())
@@ -136,7 +124,7 @@ model.compile(loss="binary_crossentropy", optimizer=opt,
 			  metrics=["accuracy"])
 
 model.summary()
-model.save_weights('my_weights.h5')
+# model.save_weights('my_weights.h5')
 
 #%% 
 
@@ -154,12 +142,12 @@ predictions = model.predict(testX, batch_size=BS) #TODO look at classification r
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
 # model.save('liveness.model')
-model.save('1_NUAA_dataset.h5')
+# model.save('1_NUAA_dataset.h5')
 
 # save the label encoder to disk
-f = open('1_NUAA_dataset.pickle', "wb")
-f.write(pickle.dumps(le))
-f.close()
+# f = open('1_NUAA_dataset.pickle', "wb")
+# f.write(pickle.dumps(le))
+# f.close()
 #%%
 
 
