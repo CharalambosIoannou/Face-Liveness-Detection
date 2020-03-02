@@ -1,7 +1,6 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 
-#TODO histogram should have real and fake values. For each column have 2 bars one for positive and one for negative
 
 data_features = pd.read_csv('features.csv', sep=',')
 data_labels = pd.read_csv('labels.csv', sep=',')
@@ -56,3 +55,6 @@ plt.bar(items1, counts1, label="avg_live", width=0.4, transform=trans1+plt.gca()
 plt.bar(items2, counts2, label="avg_fake", width=0.4, transform=trans2+plt.gca().transData)
 plt.legend()
 plt.show()
+
+
+#TODO subtract the two histograms, find biggest difference and plot it on graph
