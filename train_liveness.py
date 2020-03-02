@@ -85,7 +85,7 @@ def get_images_detected() :
 	labels1 = ["ImposterFace", "ClientFace"]
 	for label_name in labels1:
 		print('Doing label: ' , label_name)
-		for imagePath in glob.iglob(f'dataset/face_no_mouth/{label_name}/*/*.jpg'):
+		for imagePath in glob.iglob(f'dataset/face_both_eyes/{label_name}/*/*.jpg'):
 			print(imagePath)
 			# extract the class label from the filename, load the image and
 			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
@@ -105,8 +105,8 @@ def get_images_detected() :
 
 
 
-data,labels = get_images_raw()
-# data,labels = get_images_detected()
+# data,labels = get_images_raw()
+data,labels = get_images_detected()
 
 
 # Detected Face 20 epochs:
@@ -120,12 +120,12 @@ data,labels = get_images_raw()
 """
 # Detected Face 25 epochs:
 """
-{'test_detectedface':  0.903144
-'test_face_both_eyes':  0.660785
-'test_face_no_left_eye':  0.814945
-'test_face_no_right_eye':  0.745055
-'test_face_no_mouth':  0.468132
-'test_face_no_nose':  0.469011
+{"test_detectedface":  0.903144
+"test_face_both_eyes":  0.660785
+"test_face_no_left_eye":  0.814945
+"test_face_no_right_eye":  0.745055
+"test_face_no_mouth":  0.468132
+"test_face_no_nose":  0.469011
 """
 # raw Face 20 epochs:
 """
@@ -148,11 +148,11 @@ data,labels = get_images_raw()
 # face no mouth 20 epochs:
 """
 {'test_detectedface':  0.933305
-dtype: float64, 'test_face_both_eyes':  0.929863
-dtype: float64, 'test_face_no_left_eye':  0.95956
-dtype: float64, 'test_face_no_right_eye':  0.93978
-dtype: float64, 'test_face_no_mouth':  0.754286
-dtype: float64, 'test_face_no_nose':  0.745934
+'test_face_both_eyes':  0.929863
+'test_face_no_left_eye':  0.95956
+'test_face_no_right_eye':  0.93978
+'test_face_no_mouth':  0.754286
+'test_face_no_nose':  0.745934
 """
 # face no mouth 25 epochs:
 """
@@ -205,11 +205,11 @@ opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model = LivenessNet.build(width=32, height=32, depth=3,
 						  classes=len(le.classes_))
 
-# np.savetxt('feature_extraction/features_no_left_eye.csv', model.predict(trainX, batch_size=BS), delimiter=',')
-# np.savetxt('feature_extraction/labels_no_left_eye.csv', trainY, delimiter=',')
-#
-# np.savetxt('feature_extraction/features_no_left_eye.txt', model.predict(trainX, batch_size=BS), delimiter=',')
-# np.savetxt('feature_extraction/labels_no_left_eye.txt', trainY, delimiter=',')
+np.savetxt('feature_extraction/features_no_both_eyes.csv', model.predict(trainX, batch_size=BS), delimiter=',')
+np.savetxt('feature_extraction/labels_no_both_eyes.csv', trainY, delimiter=',')
+
+np.savetxt('feature_extraction/features_no_both_eyes.txt', model.predict(trainX, batch_size=BS), delimiter=',')
+np.savetxt('feature_extraction/labels_no_both_eyes.txt', trainY, delimiter=',')
 
 model.add(Activation("relu"))
 model.add(BatchNormalization())

@@ -91,7 +91,7 @@ while True :
 		cv2.imshow("Frame1", face)
 		key = cv2.waitKey(1) & 0xFF
 		if (key == ord(" ")):
-			cv2.imwrite('saved_img.jpg',face)
+			cv2.imwrite('saved_img '+str(int(round(preds[j] * 100)))+'.jpg',face)
 		face = cv2.resize(face, (32, 32))
 
 		cv2.imshow("Frame2", face)
