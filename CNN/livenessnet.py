@@ -9,6 +9,7 @@ from keras.layers.core import Dropout
 from keras.layers.core import Dense
 from keras import backend as K
 from keras.applications.resnet50 import ResNet50
+from keras.layers import LSTM,ConvLSTM2D
 
 class LivenessNet:
 	@staticmethod
@@ -18,7 +19,6 @@ class LivenessNet:
 		model = Sequential()
 		inputShape = (height, width, depth)
 		chanDim = -1
-
 		# first CONV => RELU => CONV => RELU => POOL layer set
 		model.add(Conv2D(16, (3, 3), padding="same",
 			input_shape=inputShape))
@@ -53,6 +53,9 @@ class LivenessNet:
 		# first (and only) set of FC => RELU layers
 		model.add(Flatten())
 		model.add(Dense(128))
+		
+		
+
 		
 		return model
 		

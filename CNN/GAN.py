@@ -281,7 +281,7 @@ for step in range(num_steps) :
 		step_num = str(tot_step).zfill(4)
 		save_img_batch(fake_data_X, img_save_dir + step_num + "_image.png")
 	
-	# concatenate real and fake data samples
+	# concatenate real and fake data_features samples
 	data_X = np.concatenate([real_data_X, fake_data_X])
 	# add noise to the label inputs
 	real_data_Y = np.ones(batch_size) - np.random.random_sample(batch_size) * 0.2
@@ -292,7 +292,7 @@ for step in range(num_steps) :
 	
 	discriminator.trainable = True
 	generator.trainable = False
-	# training the discriminator on real and fake data can be done together, i.e.,
+	# training the discriminator on real and fake data_features can be done together, i.e.,
 	# on the data_x and data_y, OR it can be done
 	# one by one as performed below. This is the safer choice and gives better results
 	# as compared to combining the real and generated samples.

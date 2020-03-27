@@ -23,6 +23,7 @@ import time
 from keras.callbacks import TensorBoard
 from sklearn.metrics import classification_report
 import glob
+from keras.layers import LSTM,ConvLSTM2D, Lambda
 
 from keras.layers.normalization import BatchNormalization
 from keras.layers.core import Activation
@@ -85,7 +86,7 @@ def get_images_detected() :
 	labels1 = ["ImposterFace", "ClientFace"]
 	for label_name in labels1:
 		print('Doing label: ' , label_name)
-		for imagePath in glob.iglob(f'dataset/face_both_eyes/{label_name}/*/*.jpg'):
+		for imagePath in glob.iglob(f'dataset/Detectedface/{label_name}/*/*.jpg'):
 			print(imagePath)
 			# extract the class label from the filename, load the image and
 			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
@@ -129,39 +130,39 @@ data,labels = get_images_detected()
 """
 # raw Face 20 epochs:
 """
-{'test_detectedface':  0.825404
+ test_detectedface':    0.825404
 'test_face_both_eyes':  0.535509
-'test_face_no_left_eye':  0.619341
-'test_face_no_right_eye':  0.607033
-'test_face_no_mouth':  0.469011
-'test_face_no_nose':  0.469011
+'test_face_no_left_eye': 0.619341
+'test_face_no_right_eye':0.607033
+'test_face_no_mouth':    0.469011
+'test_face_no_nose':     0.469011
 """
 # raw Face 25 epochs:
 """
-{'test_detectedface':  0.895497
+{'test_detectedface':   0.895497
 'test_face_both_eyes':  0.856198
-'test_face_no_left_eye':  0.891868
-'test_face_no_right_eye':  0.876923
-'test_face_no_mouth':  0.810989
-'test_face_no_nose':  0.674286
+'test_face_no_left_eye': 0.891868
+'test_face_no_right_eye':0.876923
+'test_face_no_mouth':    0.810989
+'test_face_no_nose':     0.674286
 """
 # face no mouth 20 epochs:
 """
-{'test_detectedface':  0.933305
-'test_face_both_eyes':  0.929863
-'test_face_no_left_eye':  0.95956
+{'test_detectedface':      0.933305
+'test_face_both_eyes':     0.929863
+'test_face_no_left_eye':   0.95956
 'test_face_no_right_eye':  0.93978
-'test_face_no_mouth':  0.754286
-'test_face_no_nose':  0.745934
+'test_face_no_mouth':      0.754286
+'test_face_no_nose':       0.745934
 """
 # face no mouth 25 epochs:
 """
-{'test_detectedface': 0.975786
-'test_face_both_eyes': 0.854433
-'test_face_no_left_eye': 0.94022
+{'test_detectedface':     0.975786
+'test_face_both_eyes':    0.854433
+'test_face_no_left_eye':  0.94022
 'test_face_no_right_eye': 0.949451
-'test_face_no_mouth': 0.925714
-'test_face_no_nose': 0.781978
+'test_face_no_mouth':     0.925714
+'test_face_no_nose':      0.781978
 """
 
 #%%
@@ -199,6 +200,9 @@ aug = ImageDataGenerator( rescale = 1./255,
                                    horizontal_flip = True,
 								    fill_mode="nearest")
 
+#%%
+from keras.layers import Reshape
+
 # initialize the optimizer and model
 print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
@@ -215,6 +219,13 @@ model.add(Activation("relu"))
 model.add(BatchNormalization())
 model.add(Dropout(0.5))
 
+
+# model.add(Lambda(lambda x: dims(model) ))
+# model.add(Lambda(tf.expand_dims(model.output, axis=-1)))
+
+model.add(Reshape((-1, 32)))
+model.add(LSTM(128))
+
 # softmax classifier
 model.add(Dense(len(le.classes_)))
 model.add(Activation("softmax"))
@@ -225,7 +236,7 @@ model.compile(loss="binary_crossentropy", optimizer=opt,
 model.summary()
 # model.save_weights('my_weights.h5')
 
-#%% 
+#%%
 
 # train the network
 print("[INFO] training network for {} epochs...".format(EPOCHS))

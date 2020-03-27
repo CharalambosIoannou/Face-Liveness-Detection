@@ -8,7 +8,7 @@ import numpy as np
 from imutils import face_utils
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
-
+import tensorflow as tf
 
 
 """
@@ -64,7 +64,7 @@ def occlude_region(img,region):
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 print("Loading model")
-model = load_model('NUAA_dataset_final.h5')
+model = load_model('NUAA_dataset_final.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
 le = pickle.loads(open('NUAA_dataset_final.pickle', "rb").read())
 
 

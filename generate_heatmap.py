@@ -146,6 +146,6 @@ size_box = 30
 
 final_img = img.copy()
 
-occlude_convolution(final_img,size_box)
+# occlude_convolution(final_img,size_box)
 # occlude_convolution_random(final_img,size_box)
-# occlude_specific_ part(final_img,"left_eye")
+occlude_specific_part(final_img,"nose")
