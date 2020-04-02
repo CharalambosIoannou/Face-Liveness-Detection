@@ -30,6 +30,8 @@ from keras.layers.core import Activation
 from keras.layers.core import Dropout
 from keras.layers.core import Dense
 from sklearn.metrics import confusion_matrix
+from keras.utils.vis_utils import plot_model
+from keras.layers import LeakyReLU
 
 
 #%%
@@ -215,7 +217,7 @@ np.savetxt('feature_extraction/labels_no_both_eyes.csv', trainY, delimiter=',')
 np.savetxt('feature_extraction/features_no_both_eyes.txt', model.predict(trainX, batch_size=BS), delimiter=',')
 np.savetxt('feature_extraction/labels_no_both_eyes.txt', trainY, delimiter=',')
 
-model.add(Activation("relu"))
+model.add(LeakyReLU(alpha=0.3))
 model.add(BatchNormalization())
 model.add(Dropout(0.5))
 
@@ -230,10 +232,13 @@ model.add(LSTM(128))
 model.add(Dense(len(le.classes_)))
 model.add(Activation("softmax"))
 
-model.compile(loss="binary_crossentropy", optimizer=opt,
+model.compile(loss="categorical_crossentropy", optimizer=opt,
 			  metrics=["accuracy"])
 
 model.summary()
+import os
+os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
+plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 # model.save_weights('my_weights.h5')
 
 #%%
@@ -244,6 +249,8 @@ print("[INFO] training network for {} epochs...".format(EPOCHS))
 H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
 						validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS,
 						epochs=EPOCHS)
+
+
 
 # evaluate the network
 print("[INFO] evaluating network...")

@@ -8,8 +8,9 @@ import imutils
 import dlib
 from imutils import face_utils
 import random
+import tensorflow as tf
 
-model = load_model('NUAA_dataset_final.h5')
+model = load_model('NUAA_dataset_final.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
 le = pickle.loads(open('NUAA_dataset_final.pickle', "rb").read())
 def get_accuracy(img):
 	frame = cv2.resize(img, (32, 32))
@@ -44,7 +45,7 @@ def occlude_convolution_random(final_img,size_box):
 	cv2.waitKey(0)
 
 
-def occlude_convolution(final_img,size_box):
+def occlude_convolution(final_img,size_box,perc_org):
 	c = 14
 	l = []
 	for i in range (width):
@@ -55,12 +56,13 @@ def occlude_convolution(final_img,size_box):
 					cv2.imshow("org: " , img)
 					img_c = img.copy()
 					cv2.imshow("cop: " , img_c)
+					
 					occlude =  cv2.rectangle(img_c, (i, j), (i+size_box, j+size_box), (255, 255, 255), -1)
 					final_img = cv2.rectangle(final_img, (i, j), (i+size_box, j+size_box), (255, 255, 255), -1)
 					cv2.imshow("occ: " , occlude)
 					cv2.waitKey(0)
 					label, perc = get_accuracy(occlude)
-					perc =  str(int(round(perc * 100)))
+					perc = str(int(round(((perc*100) * int(perc_org))/100))) # str(int(round(perc * 100))) #
 					print("new perc acc: " , perc)
 					print("new label: " ,label)
 					print("*****************")
@@ -129,16 +131,38 @@ def occlude_region(img,region):
 	return clone
 
 
-image = 'saved_img 99.jpg'
+image = 'saved_img 77.jpg'
 
 # load img
 img = cv2.imread(image)
+# cv2.imshow("org: " , img)
+# for i in range(5):
+# 	img_c = img.copy()
+# 	occ = cv2.rectangle(img_c, (i*10, i*10), (i*10+20+(i*10), i*10+20+i*10), (0, 0, 255), -1)
+# 	cv2.imshow("occ: " , occ)
+# 	cv2.waitKey(0)
+# 	face = cv2.resize(img_c, (32, 32))
+# 	cv2.imshow("Frame2", face)
+# 	face = img_to_array(face)
+# 	face = np.expand_dims(face, axis=0)
+#
+#
+# 	preds = model.predict(face)[0]
+# 	j = np.argmax(preds)
+# 	label = le.classes_[j]
+#
+# 	print("{}: {:.4f}".format(label, preds[j]))
+#
+#
+
+
+
 img_c = img.copy()
 width, height,_ = img.shape
 
 
 label, perc = get_accuracy(img)
-perc =  str(int(round(perc * 100)))
+perc_org =  str(int(round(perc * 100)))
 print("org perc acc: " , perc)
 print("org label: " ,label)
 
@@ -146,6 +170,6 @@ size_box = 30
 
 final_img = img.copy()
 
-# occlude_convolution(final_img,size_box)
+occlude_convolution(final_img,size_box,perc_org)
 # occlude_convolution_random(final_img,size_box)
-occlude_specific_part(final_img,"nose")
+# occlude_specific_part(final_img,"nose")
