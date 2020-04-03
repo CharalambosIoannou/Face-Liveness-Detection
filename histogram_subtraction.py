@@ -50,6 +50,7 @@ print("min org_w_both_eyes:" ,min(org_w_both_eyes) )
 
 a = ['org_w_right_eye','org_w_left_eye','org_w_mouth','org_w_nose','org_w_both_eyes']
 b = [org_w_right_eye,org_w_left_eye,org_w_mouth,org_w_nose,org_w_both_eyes]
+c = ['No Right Eye','No Left Eye', 'No mouth', 'No nose', 'No both eyes']
 
 for i in range(len(a)):
 	items1 = b[i]
@@ -60,7 +61,7 @@ for i in range(len(a)):
 	trans2 = matplotlib.transforms.Affine2D().translate(+0.2,0)
 	
 	plt.bar(counts1,items1 , width=0.8, transform=trans1+plt.gca().transData)
-	plt.title(f"Original- Right Eye. Max val:{round(max(items1),2)} / Min val: {round(min(items1),2)}")
+	plt.title(f"Original-{c[i]}. \n Max val:{round(max(items1),2)} / Min val: {round(min(items1),2)}")
 	plt.savefig(f'feature_extraction/imgs/{a[i]}.png', dpi=700)
 	plt.legend()
 	plt.show()

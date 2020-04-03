@@ -24,22 +24,20 @@ from keras.callbacks import TensorBoard
 from sklearn.metrics import classification_report
 import glob
 from keras.layers import LSTM,ConvLSTM2D, Lambda
-
 from keras.layers.normalization import BatchNormalization
 from keras.layers.core import Activation
 from keras.layers.core import Dropout
 from keras.layers.core import Dense
-from sklearn.metrics import confusion_matrix
 from keras.utils.vis_utils import plot_model
 from keras.layers import LeakyReLU
-
-
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef,roc_auc_score,roc_curve, auc
+import pandas as pd
 #%%
 # initialize the initial learning rate, batch size, and number of
 # epochs to train for
 INIT_LR = 1e-4
 BS = 10
-EPOCHS = 25
+EPOCHS = 1
 # Define the Keras TensorBoard callback.
 NAME = "Live vs Fake photos" + str(int(time.time()))
 tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
@@ -107,7 +105,6 @@ def get_images_detected() :
 	return data,labels
 
 
-
 # data,labels = get_images_raw()
 data,labels = get_images_detected()
 
@@ -169,7 +166,7 @@ data,labels = get_images_detected()
 
 #%%
 print(len(data))
-#%% 
+#%%
 # convert the data_features into a NumPy array, then preprocess it by scaling
 # all pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
@@ -191,16 +188,16 @@ labels = np_utils.to_categorical(labels, 2)
 # apply data_features augmentation, randomly translating, rotating, resizing, etc. images on the fly.
 # enabling our model to generalize better
 aug = ImageDataGenerator( rescale = 1./255,
-                                   shear_range = 0.2,
-								   width_shift_range=0.2, 
+								   shear_range = 0.2,
+								   width_shift_range=0.2,
 								   height_shift_range=0.2,
 								   rotation_range=90,
 								   brightness_range=[0.2,1.0],
 								   zoom_range=[0.5,1.0],
 								   featurewise_center=True,
 								  featurewise_std_normalization=True,
-                                   horizontal_flip = True,
-								    fill_mode="nearest")
+								   horizontal_flip = True,
+									fill_mode="nearest")
 
 #%%
 from keras.layers import Reshape
@@ -225,8 +222,8 @@ model.add(Dropout(0.5))
 # model.add(Lambda(lambda x: dims(model) ))
 # model.add(Lambda(tf.expand_dims(model.output, axis=-1)))
 
-model.add(Reshape((-1, 32)))
-model.add(LSTM(128))
+# model.add(Reshape((-1, 32)))
+# model.add(LSTM(128))
 
 # softmax classifier
 model.add(Dense(len(le.classes_)))
@@ -259,12 +256,12 @@ predictions = model.predict(testX, batch_size=BS)
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
 # model.save('liveness.model')
-model.save('NUAA_dataset_final.h5')
+# model.save('NUAA_dataset_final.h5')
 
 # save the label encoder to disk
-f = open('NUAA_dataset_final.pickle', "wb")
-f.write(pickle.dumps(le))
-f.close()
+# f = open('NUAA_dataset_final.pickle', "wb")
+# f.write(pickle.dumps(le))
+# f.close()
 #%%
 
 
@@ -336,13 +333,82 @@ df.to_csv("detected.csv",index=False)
 
 actual = model.predict(testX)
 actual = np.argmax(actual, axis=1) # axis 1 = rows, axis 0 = columns
+print("after: " , actual)
+print(np.argmax(testY, axis=1))
 
+y_pred = np.argmax(predictions, axis=1)
+y_test = np.argmax(testY, axis=1)
 """ argmax returns the index of the maximum value in each of the rows in the model"""
-results = confusion_matrix(np.argmax(testY, axis=1), actual)
-report_1 = classification_report(np.argmax(testY, axis=1), actual, target_names=['actual' , 'expected'])
+results = confusion_matrix(y_test, y_pred)
+tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+report_1 = classification_report(y_test,y_pred , target_names=['actual' , 'expected'])
+# Precision
+pr = precision_score(y_test, y_pred)
+
+# Recall
+re = recall_score(y_test, y_pred)
+
+# F1 score
+f1 = f1_score(y_test,y_pred)
+
+# Cohen's kappa
+co = cohen_kappa_score(y_test, y_pred)
+
+# matthews_corrcoef
+ma = matthews_corrcoef(y_test, y_pred)
+
+acc = (tp+tn) / (tp+tn+fp+fn)
+tnr =tn / (fp+tn)
+fpr = fp / (fp+tn)
 print("conf: " ,results)
 print("report_1: " ,report_1)
 
+print("tn: " ,tn)
+print("fp: " ,fp)
+print("fn: " ,fn)
+print("tp: " ,tp)
+print("pr: " ,pr)
+print("TPR, re: " ,re)
+print("f1: " ,f1)
+print("co: " ,co)
+print("ma: " ,ma)
+print("acc: " ,acc)
+print("TNR: " ,tnr)
+print("FPR: " ,fpr)
+
+# Compute ROC curve and ROC area for each class
+
+
+fpr = {}
+tpr = {}
+roc_auc = {}
+for i in range(2):
+	fpr[i], tpr[i], _ = roc_curve(y_test, y_pred)
+	roc_auc[i] = auc(fpr[i], tpr[i])
+
+# print (roc_auc_score(y_test, y_pred))
+# plt.figure()
+# plt.plot(fpr[1], tpr[1])
+# plt.xlim([0.0, 1.0])
+# plt.ylim([0.0, 1.05])
+# plt.xlabel('False Positive Rate')
+# plt.ylabel('True Positive Rate')
+# plt.title('Receiver operating characteristic')
+# plt.savefig('roc.png')
+# plt.show()
+
+plt.figure()
+lw = 2
+plt.plot(fpr[1], tpr[1], color='darkorange',
+         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc[1])
+plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver operating characteristic example')
+plt.legend(loc="lower right")
+plt.savefig('roc.png')
 
 
 # plot the training loss and accuracy
