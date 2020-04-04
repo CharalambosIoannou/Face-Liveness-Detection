@@ -64,8 +64,8 @@ def occlude_region(img,region):
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 print("Loading model")
-model = load_model('NUAA_dataset_final.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
-le = pickle.loads(open('NUAA_dataset_final.pickle', "rb").read())
+model = load_model('NUAA_dataset_final_60.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
+le = pickle.loads(open('NUAA_dataset_final_60.pickle', "rb").read())
 
 
 print("Starting camera")

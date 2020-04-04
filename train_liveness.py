@@ -37,7 +37,7 @@ import pandas as pd
 # epochs to train for
 INIT_LR = 1e-4
 BS = 10
-EPOCHS = 1
+EPOCHS = 60
 # Define the Keras TensorBoard callback.
 NAME = "Live vs Fake photos" + str(int(time.time()))
 tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
@@ -256,12 +256,12 @@ predictions = model.predict(testX, batch_size=BS)
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
 # model.save('liveness.model')
-# model.save('NUAA_dataset_final.h5')
+model.save('NUAA_dataset_final_60.h5')
 
 # save the label encoder to disk
-# f = open('NUAA_dataset_final.pickle', "wb")
-# f.write(pickle.dumps(le))
-# f.close()
+f = open('NUAA_dataset_final_60.pickle', "wb")
+f.write(pickle.dumps(le))
+f.close()
 #%%
 
 
