@@ -9,7 +9,7 @@ from imutils import face_utils
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 import tensorflow as tf
-
+import time
 
 """
 Domain shifting problem- using a different dataset
@@ -64,13 +64,16 @@ def occlude_region(img,region):
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 print("Loading model")
-model = load_model('NUAA_dataset_final_60.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
-le = pickle.loads(open('NUAA_dataset_final_60.pickle', "rb").read())
+model = load_model('NUAA_dataset_final_60_n.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
+le = pickle.loads(open('NUAA_dataset_final_60_n.pickle', "rb").read())
 
 
 print("Starting camera")
 vs = cv2.VideoCapture(0)
 time.sleep(2.0)
+pred = []
+actual = []
+start = time.time()
 while True :
 
 	ret, frame = vs.read()
@@ -95,20 +98,27 @@ while True :
 		face = cv2.resize(face, (32, 32))
 
 		cv2.imshow("Frame2", face)
-		face = face.astype("float") / 255.0
-		face = img_to_array(face)
+		face =img_to_array( face.astype("float") / 255.0)
 		face = np.expand_dims(face, axis=0)
-
-
-		preds = model.predict(face)[0]
+		preds = model.predict(face)
+		preds = preds[0]
 		j = np.argmax(preds)
-		label = le.classes_[j]
+		label = [0,1][j]
 
+		print(int(time.time()) - int(start))
+		
+		if (int(time.time()) - int(start) <=15):
+			print("Adding")
+			pred.append(label)
+			
 		# draw the label and bounding box on the frame
 		if (label == 1):
 			label='real'
 		else:
 			label = 'fake'
+			
+		
+			
 		label = "{}: {:.4f}".format(label, preds[j])
 		
 		
@@ -121,12 +131,14 @@ while True :
 	# show the output frame and wait for a key press
 	cv2.imshow("Frame", frame)
 
-	
+
 
 	# if the `q` key was pressed, break from the loop
 	if key == ord("q") :
 		break
 
+print(len(pred))
+print(pred)
 # do a bit of cleanup
 cv2.destroyAllWindows()
 vs.stop()

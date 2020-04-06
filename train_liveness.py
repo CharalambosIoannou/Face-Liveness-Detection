@@ -9,7 +9,7 @@ from keras.preprocessing.image import img_to_array
 
 matplotlib.use("Agg")
 
-from CNN.livenessnet import LivenessNet
+from CNN.livenessnet import build
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
@@ -32,6 +32,7 @@ from keras.utils.vis_utils import plot_model
 from keras.layers import LeakyReLU
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef,roc_auc_score,roc_curve, auc
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 #%%
 # initialize the initial learning rate, batch size, and number of
 # epochs to train for
@@ -98,87 +99,30 @@ def get_images_detected() :
 			# update the data_features and labels lists, respectively
 			data.append(image)
 			if (label_name == 'ImposterFace'):
-				labels.append(0)
+				labels.append([0])
 			else:
-				labels.append(1)
+				labels.append([1])
 				
 	return data,labels
-
-
 # data,labels = get_images_raw()
 data,labels = get_images_detected()
 
-
-# Detected Face 20 epochs:
-"""
-{'test_detectedface':  0.757009
-'test_face_both_eyes':  0.640494
-'test_face_no_left_eye':  0.698462
-'test_face_no_right_eye':  0.662857
-'test_face_no_mouth':  0.46989
-'test_face_no_nose':  0.468132}
-"""
-# Detected Face 25 epochs:
-"""
-{"test_detectedface":  0.903144
-"test_face_both_eyes":  0.660785
-"test_face_no_left_eye":  0.814945
-"test_face_no_right_eye":  0.745055
-"test_face_no_mouth":  0.468132
-"test_face_no_nose":  0.469011
-"""
-# raw Face 20 epochs:
-"""
- test_detectedface':    0.825404
-'test_face_both_eyes':  0.535509
-'test_face_no_left_eye': 0.619341
-'test_face_no_right_eye':0.607033
-'test_face_no_mouth':    0.469011
-'test_face_no_nose':     0.469011
-"""
-# raw Face 25 epochs:
-"""
-{'test_detectedface':   0.895497
-'test_face_both_eyes':  0.856198
-'test_face_no_left_eye': 0.891868
-'test_face_no_right_eye':0.876923
-'test_face_no_mouth':    0.810989
-'test_face_no_nose':     0.674286
-"""
-# face no mouth 20 epochs:
-"""
-{'test_detectedface':      0.933305
-'test_face_both_eyes':     0.929863
-'test_face_no_left_eye':   0.95956
-'test_face_no_right_eye':  0.93978
-'test_face_no_mouth':      0.754286
-'test_face_no_nose':       0.745934
-"""
-# face no mouth 25 epochs:
-"""
-{'test_detectedface':     0.975786
-'test_face_both_eyes':    0.854433
-'test_face_no_left_eye':  0.94022
-'test_face_no_right_eye': 0.949451
-'test_face_no_mouth':     0.925714
-'test_face_no_nose':      0.781978
-"""
-
 #%%
-print(len(data))
-#%%
+
+
+
 # convert the data_features into a NumPy array, then preprocess it by scaling
 # all pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
 
 # encode the labels (which are currently strings) as integers and then
 # one-hot encode them
-le = LabelEncoder()
-labels = le.fit_transform(labels)
-labels = np_utils.to_categorical(labels, 2)
+enc = OneHotEncoder()
+enc.fit(labels)
+labels = enc.transform(labels).toarray()
 
 
-
+#%%
 # training data_features ( trainX ) and training labels ( trainY ).
 (trainX, testX, trainY, testY) = train_test_split(data, labels,
 												  test_size=0.20, random_state=42)
@@ -205,8 +149,8 @@ from keras.layers import Reshape
 # initialize the optimizer and model
 print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-model = LivenessNet.build(width=32, height=32, depth=3,
-						  classes=len(le.classes_))
+model = build(width=32, height=32, depth=3,
+						  classes=2)
 
 np.savetxt('feature_extraction/features_no_both_eyes.csv', model.predict(trainX, batch_size=BS), delimiter=',')
 np.savetxt('feature_extraction/labels_no_both_eyes.csv', trainY, delimiter=',')
@@ -219,14 +163,8 @@ model.add(BatchNormalization())
 model.add(Dropout(0.5))
 
 
-# model.add(Lambda(lambda x: dims(model) ))
-# model.add(Lambda(tf.expand_dims(model.output, axis=-1)))
-
-# model.add(Reshape((-1, 32)))
-# model.add(LSTM(128))
-
 # softmax classifier
-model.add(Dense(len(le.classes_)))
+model.add(Dense(2))
 model.add(Activation("softmax"))
 
 model.compile(loss="categorical_crossentropy", optimizer=opt,
@@ -236,10 +174,8 @@ model.summary()
 import os
 os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
-# model.save_weights('my_weights.h5')
 
 #%%
-
 # train the network
 print("[INFO] training network for {} epochs...".format(EPOCHS))
 # fit generator is on infinite look so do steps per epoch to terminate it
@@ -252,15 +188,12 @@ H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
 # evaluate the network
 print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS)
-# print(classification_report(testY.argmax(axis=1),predictions.argmax(axis=1), target_names=le.classes_))
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
-# model.save('liveness.model')
-model.save('NUAA_dataset_final_60.h5')
-
+model.save('NUAA_dataset_final_60_n.h5')
 # save the label encoder to disk
-f = open('NUAA_dataset_final_60.pickle', "wb")
-f.write(pickle.dumps(le))
+f = open('NUAA_dataset_final_60_n.pickle', "wb")
+f.write(pickle.dumps(enc))
 f.close()
 #%%
 
@@ -291,7 +224,7 @@ for label_name in labels_t:
 		
 				preds = model.predict(face)[0]
 				j = np.argmax(preds)
-				label = le.classes_[j]
+				label = [0, 1][j]
 				if (label == 1):
 					label='real'
 				else:
@@ -317,7 +250,7 @@ for label_name in labels_t:
 			frame = np.expand_dims(frame, axis=0)
 			preds = model.predict(frame)[0]
 			j = np.argmax(preds)
-			label = le.classes_[j]
+			label = [0, 1][j]
 			if (label == 1):
 				label='real'
 				
@@ -414,15 +347,16 @@ plt.savefig('roc.png')
 # plot the training loss and accuracy
 plt.style.use("ggplot")
 plt.figure()
-plt.plot(np.arange(0, EPOCHS), H.history["loss"], label="train_loss")
-plt.plot(np.arange(0, EPOCHS), H.history["val_loss"], label="val_loss")
-plt.plot(np.arange(0, EPOCHS), H.history["accuracy"], label="train_acc")
-plt.plot(np.arange(0, EPOCHS), H.history["val_accuracy"], label="val_acc")
+plt.plot(H.history["loss"], label="train_loss")
+plt.plot(H.history["val_loss"], label="val_loss")
+plt.plot(H.history["accuracy"], label="train_acc")
+plt.plot(H.history["val_accuracy"], label="val_acc")
 plt.title("Training Loss and Accuracy on Dataset")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss/Accuracy")
+plt.xlabel("Epochs")
+plt.ylabel("Accuracy and Loss")
 plt.legend(loc="lower left")
 plt.savefig('plot.png')
+
 
 score = model.evaluate_generator(aug.flow(trainX, trainY, batch_size=BS), verbose=1, steps=500)
 print("Metric Names are : ", model.metrics_names)  # ['loss', 'accuracy']
