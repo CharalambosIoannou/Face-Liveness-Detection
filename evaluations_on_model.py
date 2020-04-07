@@ -9,7 +9,7 @@ from keras.preprocessing.image import img_to_array
 
 matplotlib.use("Agg")
 
-from CNN.livenessnet import LivenessNet
+from CNN.livenessnet import build
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
@@ -21,7 +21,6 @@ import cv2
 from keras.optimizers import Adam
 import time
 from keras.callbacks import TensorBoard
-from sklearn.metrics import classification_report
 import glob
 from keras.layers import LSTM,ConvLSTM2D, Lambda
 
@@ -31,7 +30,7 @@ from keras.layers.core import Dropout
 from keras.layers.core import Dense
 from keras.utils.vis_utils import plot_model
 from keras.layers import LeakyReLU
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef,classification_report
 import pandas as pd
 import time
 #%%
@@ -153,7 +152,7 @@ for EPOCHS in epochs:
 	# initialize the optimizer and model
 	print("[INFO] compiling model...")
 	opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-	model = LivenessNet.build(width=32, height=32, depth=3,
+	model = build(width=32, height=32, depth=3,
 							  classes=len(le.classes_))
 
 	

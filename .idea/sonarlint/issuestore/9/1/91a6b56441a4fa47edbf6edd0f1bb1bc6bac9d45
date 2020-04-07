@@ -1,8 +1,5 @@
 
-}python:S117Y"ZRename this local variable "imagePath" to match the regular expression ^[_a-z][a-z0-9_]*$.(¶¯“èüÿÿÿÿ8¦ßˆè‡.
-Cpython:S125…"Remove this commented out code.(Ë«¤­ıÿÿÿÿ8Ç¬Ÿ”.
-=python:S125á"Remove this commented out code.(C8ÊßÕŒ”.
-xpython:S1176"ZRename this local variable "imagePath" to match the regular expression ^[_a-z][a-z0-9_]*$.(–ÿØÀ8Ò‚è‡.
-=python:S125l"Remove this commented out code.(ô³äá8çÁºç‰.
->python:S125‚"Remove this commented out code.( •ÚË8 —áÿ“.
->python:S125Ş"Remove this commented out code.(úÀÏ8ªåÿí‘.
+xpython:S1177"ZRename this local variable "imagePath" to match the regular expression ^[_a-z][a-z0-9_]*$.(–ÿØÀ8Ò‚è‡.
+}python:S117Z"ZRename this local variable "imagePath" to match the regular expression ^[_a-z][a-z0-9_]*$.(¶¯“èüÿÿÿÿ8¦ßˆè‡.
+=python:S125k"Remove this commented out code.(ô³äá8éÊØù”.
+Cpython:S125Â"Remove this commented out code.(Ë«¤­ıÿÿÿÿ8Ç¬Ÿ”.

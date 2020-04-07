@@ -10,19 +10,8 @@ from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 import tensorflow as tf
 import time
-
-"""
-Domain shifting problem- using a different dataset
-look for domain adaptation algorithm
-
-
-"""
-
-# wears_glasses = input("Do you wear glasses? Type y or n \n")
-
-#TODO register user
-# Preliminary definitions (Let X in the training) Experiment part
-# Face occlusion detection
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef,classification_report
+from collections import Counter
 
 def init(image):
 	detector = dlib.get_frontal_face_detector()
@@ -73,7 +62,9 @@ vs = cv2.VideoCapture(0)
 time.sleep(2.0)
 pred = []
 actual = []
+choice = input("Fake or real? \n")
 start = time.time()
+flag = False
 while True :
 
 	ret, frame = vs.read()
@@ -103,14 +94,26 @@ while True :
 		preds = model.predict(face)
 		preds = preds[0]
 		j = np.argmax(preds)
+		print("preds: ", preds)
+		print("j: " , j)
 		label = [0,1][j]
+
+		print(int(time.time()) - int(start))
+		sub = int(time.time()) - int(start)
+		if ( sub <=15):
+			print("Adding")
+			pred.append(label)
+		else:
+			flag = True
+			break
 		
 		# draw the label and bounding box on the frame
 		if (label == 1):
 			label='real'
 		else:
 			label = 'fake'
-			
+	
+		
 		
 			
 		label = "{}: {:.4f}".format(label, preds[j])
@@ -121,7 +124,8 @@ while True :
 
 		cv2.rectangle(frame, (x, y), (x + w, y + h),
 		              (0, 0, 0), 2)
-
+	if flag:
+		break
 	# show the output frame and wait for a key press
 	cv2.imshow("Frame", frame)
 
@@ -132,7 +136,60 @@ while True :
 		break
 
 print(len(pred))
+
+if choice == "real":
+	actual = [1 for i in range(len(pred))]
+else:
+	actual = [0 for i in range(len(pred))]
 print(pred)
+print(actual)
+
+y_pred1= Counter(pred)
+y_test1 = Counter(actual)
+most_common_y_pred = y_pred1.most_common(1)
+most_common_y_test = y_test1.most_common(1)
+majority_voting = most_common_y_pred[0][0]
+if (majority_voting == 1):
+	majority_voting = 'real'
+else:
+	majority_voting = 'fake'
+print("Majority Voting: " , majority_voting)
+
+
+
+y_pred = np.array(pred)
+y_test = np.array(actual)
+""" argmax returns the index of the maximum value in each of the rows in the model"""
+results = confusion_matrix(y_test, y_pred)
+tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+report_1 = classification_report(y_test,y_pred , target_names=['actual' , 'expected'])
+# Precision
+pr = precision_score(y_test, y_pred)
+
+# Recall
+re = recall_score(y_test, y_pred)
+
+# F1 score
+f1 = f1_score(y_test,y_pred)
+
+# Cohen's kappa
+co = cohen_kappa_score(y_test, y_pred)
+
+# matthews_corrcoef
+ma = matthews_corrcoef(y_test, y_pred)
+
+acc = (tp+tn) / (tp+tn+fp+fn)
+tnr =tn / (fp+tn)
+fpr = fp / (fp+tn)
+print("conf: " ,results)
+print("report_1: " ,report_1)
+
+print(len(y_test))
+print(y_pred.mean())
+print("acc: " ,acc)
+
+
+
 # do a bit of cleanup
 cv2.destroyAllWindows()
-vs.stop()
+
