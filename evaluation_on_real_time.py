@@ -53,8 +53,8 @@ def occlude_region(img,region):
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 print("Loading model")
-model = load_model('NUAA_dataset_final_85.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
-le = pickle.loads(open('NUAA_dataset_final_85.pickle', "rb").read())
+model = load_model('with_chris1_85_straight.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
+le = pickle.loads(open('with_chris1_85_straight.pickle', "rb").read())
 
 
 print("Starting camera")
@@ -153,7 +153,7 @@ if (majority_voting == 1):
 	majority_voting = 'real'
 else:
 	majority_voting = 'fake'
-print("Majority Voting: " , majority_voting)
+
 
 
 
@@ -187,7 +187,7 @@ print("report_1: " ,report_1)
 print(len(y_test))
 print(y_pred.mean())
 print("acc: " ,acc)
-
+print("Majority Voting: " , majority_voting)
 
 
 # do a bit of cleanup

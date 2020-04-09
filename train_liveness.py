@@ -152,11 +152,11 @@ opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model = build(width=32, height=32, depth=3,
 						  classes=2)
 
-np.savetxt('feature_extraction/features_no_both_eyes.csv', model.predict(trainX, batch_size=BS), delimiter=',')
-np.savetxt('feature_extraction/labels_no_both_eyes.csv', trainY, delimiter=',')
-
-np.savetxt('feature_extraction/features_no_both_eyes.txt', model.predict(trainX, batch_size=BS), delimiter=',')
-np.savetxt('feature_extraction/labels_no_both_eyes.txt', trainY, delimiter=',')
+# np.savetxt('feature_extraction/features_no_both_eyes.csv', model.predict(trainX, batch_size=BS), delimiter=',')
+# np.savetxt('feature_extraction/labels_no_both_eyes.csv', trainY, delimiter=',')
+#
+# np.savetxt('feature_extraction/features_no_both_eyes.txt', model.predict(trainX, batch_size=BS), delimiter=',')
+# np.savetxt('feature_extraction/labels_no_both_eyes.txt', trainY, delimiter=',')
 
 model.add(LeakyReLU(alpha=0.3))
 model.add(BatchNormalization())
@@ -190,9 +190,8 @@ print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS)
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
-model.save('NUAA_dataset_final_60_n.h5')
-# save the label encoder to disk
-f = open('NUAA_dataset_final_60_n.pickle', "wb")
+model.save('with_chris1_85_straight.h5')
+f = open('with_chris1_85_straight.pickle', "wb")
 f.write(pickle.dumps(enc))
 f.close()
 #%%
@@ -250,7 +249,7 @@ for label_name in labels_t:
 			frame = np.expand_dims(frame, axis=0)
 			preds = model.predict(frame)[0]
 			j = np.argmax(preds)
-			label = [0, 1][j]
+			label = [0,1][j]
 			if (label == 1):
 				label='real'
 				
