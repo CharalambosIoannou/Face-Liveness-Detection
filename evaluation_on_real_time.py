@@ -13,43 +13,6 @@ import time
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef,classification_report
 from collections import Counter
 
-def init(image):
-	detector = dlib.get_frontal_face_detector()
-	predictor = dlib.shape_predictor("face_occlusion/shape_predictor_68_face_landmarks.dat")
-
-	# load the input image, resize it, and convert it to grayscale
-	
-	image = imutils.resize(image, width=500)
-
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	
-	# loop over the face detections
-
-	# rect = dlib.rectangle(x, y, x+w, y+h )
-	rects = detector(gray, 1)[0]
-	shape = predictor(gray, rects)
-	shape = face_utils.shape_to_np(shape)
-	return image, shape
-
-def occlude_region(img,region):
-	face_features = {
-	"mouth": (48, 68),
-	"right_eyebrow": (17, 22),
-	"left_eyebrow": (22, 27),
-	"right_eye": (36, 42),
-	"left_eye": (42, 48),
-	"nose": (27, 36),
-	}
-	feature =  face_features.get(region)
-	image , shape = init(img)
-	clone = image.copy()
-	(x, y, w, h) = cv2.boundingRect(np.array([shape[feature[0]:feature[1]]]))
-	roi = image[y:y + h, x:x + w]
-	# roi = imutils.resize(roi, width=250, inter=cv2.INTER_CUBIC)
-	cv2.rectangle(clone, (x, y), (x+w, y+h), (255, 0, 0), -1)
-	# cv2.imshow("roi: " , roi)
-	return x, y, w, h
-
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 print("Loading model")

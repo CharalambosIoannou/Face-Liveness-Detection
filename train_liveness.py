@@ -1,19 +1,18 @@
 # USAGE
 # python train_liveness.py --dataset dataset --model liveness.model --le le.pickle
 
+import imutils
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
-
-import imutils
 from keras.preprocessing.image import img_to_array
+
+
 
 matplotlib.use("Agg")
 
 from CNN.livenessnet import build
-from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
-from keras.utils import np_utils
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
@@ -23,15 +22,10 @@ import time
 from keras.callbacks import TensorBoard
 from sklearn.metrics import classification_report
 import glob
-from keras.layers import LSTM,ConvLSTM2D, Lambda
-from keras.layers.normalization import BatchNormalization
-from keras.layers.core import Activation
-from keras.layers.core import Dropout
-from keras.layers.core import Dense
+import keras
 from keras.utils.vis_utils import plot_model
-from keras.layers import LeakyReLU
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef,roc_auc_score,roc_curve, auc
-import pandas as pd
+from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef, \
+	roc_curve, auc
 from sklearn.preprocessing import OneHotEncoder
 #%%
 # initialize the initial learning rate, batch size, and number of
@@ -73,9 +67,9 @@ def get_images_raw() :
 			# update the data_features and labels lists, respectively
 			data.append(face)
 			if (label_name == 'ImposterRaw') :
-				labels.append(0)
+				labels.append([0])
 			else :
-				labels.append(1)
+				labels.append([1])
 				
 	return data,labels
 
@@ -144,7 +138,6 @@ aug = ImageDataGenerator( rescale = 1./255,
 									fill_mode="nearest")
 
 #%%
-from keras.layers import Reshape
 
 # initialize the optimizer and model
 print("[INFO] compiling model...")
@@ -158,14 +151,14 @@ model = build(width=32, height=32, depth=3,
 # np.savetxt('feature_extraction/features_no_both_eyes.txt', model.predict(trainX, batch_size=BS), delimiter=',')
 # np.savetxt('feature_extraction/labels_no_both_eyes.txt', trainY, delimiter=',')
 
-model.add(LeakyReLU(alpha=0.3))
-model.add(BatchNormalization())
-model.add(Dropout(0.5))
+model.add(keras.layers.LeakyReLU(alpha=0.3))
+model.add(keras.layers.normalization.BatchNormalization())
+model.add(keras.layers.core.Dropout(0.5))
 
 
 # softmax classifier
-model.add(Dense(2))
-model.add(Activation("softmax"))
+model.add(keras.layers.core.Dense(2))
+model.add(keras.layers.core.Activation("softmax"))
 
 model.compile(loss="categorical_crossentropy", optimizer=opt,
 			  metrics=["accuracy"])
@@ -179,7 +172,8 @@ plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=T
 # train the network
 print("[INFO] training network for {} epochs...".format(EPOCHS))
 # fit generator is on infinite look so do steps per epoch to terminate it
-H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
+augm = aug.flow(trainX, trainY, batch_size=BS)
+H = model.fit_generator(augm,
 						validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS,
 						epochs=EPOCHS)
 
@@ -190,8 +184,8 @@ print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS)
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
-model.save('with_chris1_85_straight.h5')
-f = open('with_chris1_85_straight.pickle', "wb")
+model.save('after_edit.h5')
+f = open('after_edit.pickle', "wb")
 f.write(pickle.dumps(enc))
 f.close()
 #%%
@@ -217,10 +211,8 @@ for label_name in labels_t:
 				roi_color = frame[y :y + h, x :x + w]
 				face = frame[y :y + h, x :x + w]
 				face = cv2.resize(face, (32, 32))
-				face = face.astype("float") / 255.0
-				face = img_to_array(face)
+				face = img_to_array(face.astype("float") / 255.0)
 				face = np.expand_dims(face, axis=0)
-		
 				preds = model.predict(face)[0]
 				j = np.argmax(preds)
 				label = [0, 1][j]
@@ -244,8 +236,7 @@ for label_name in labels_t:
 			image = cv2.imread(imagePath)
 			frame = imutils.resize(image, width=600)
 			frame = cv2.resize(frame, (32, 32))
-			frame = frame.astype("float") / 255.0
-			frame = img_to_array(frame)
+			frame = img_to_array(frame.astype("float") / 255.0)
 			frame = np.expand_dims(frame, axis=0)
 			preds = model.predict(frame)[0]
 			j = np.argmax(preds)

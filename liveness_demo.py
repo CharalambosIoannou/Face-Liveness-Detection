@@ -48,13 +48,13 @@ while True :
 		#get pixel locations of the box to extract face
 		roi_color = frame[y :y + h, x :x + w]
 		face = frame[y :y + h, x :x + w]
-		cv2.imshow("Frame1", face)
+		# cv2.imshow("Frame1", face)
 		key = cv2.waitKey(1) & 0xFF
 		if (key == ord(" ")):
 			cv2.imwrite('saved_img '+str(int(round(preds[j] * 100)))+'.jpg',face)
 		face = cv2.resize(face, (32, 32))
 
-		cv2.imshow("Frame2", face)
+		# cv2.imshow("Frame2", face)
 		face =img_to_array( face.astype("float") / 255.0)
 		face = np.expand_dims(face, axis=0)
 		preds = model.predict(face)
@@ -73,9 +73,8 @@ while True :
 		else:
 			label = 'fake'
 			
-		
-			
-		label = "{}: {:.4f}".format(label, preds[j])
+		perc = round(preds[j] *100,2)
+		label = f"{label}- conf: {perc}%"
 		
 		
 		cv2.putText(frame, label, (x, y - 10),

@@ -6,14 +6,8 @@ import dlib
 import cv2
 import glob
 
-face_features = {
-	"mouth": (48, 68),
-	"right_eyebrow": (17, 22),
-	"left_eyebrow": (22, 27),
-	"right_eye": (36, 42),
-	"left_eye": (42, 48),
-	"nose": (27, 36),
-}
+# code modified from https://www.pyimagesearch.com/2017/04/10/detect-eyes-nose-lips-jaw-dlib-opencv-python/
+
 
 def init(image):
 	detector = dlib.get_frontal_face_detector()

@@ -1,3 +1,3 @@
 
-Bpython:S125J"Remove this commented out code.(ñ×«”ıÿÿÿÿ8•Ò™Ï‚.
-Bpython:S125"Remove this commented out code.(áÄæÿÿÿÿÿ8±²ñ†.
+}python:S117)"ZRename this local variable "imagePath" to match the regular expression ^[_a-z][a-z0-9_]*$.(ÄéÑşÿÿÿÿ8Âíø¤–.
+xpython:S3776"TRefactor this function to reduce its Cognitive Complexity from 16 to the 15 allowed.(äßÈìúÿÿÿÿ8Âíø¤–.
