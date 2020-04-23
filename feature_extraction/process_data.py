@@ -56,5 +56,3 @@ plt.bar(items2, counts2, label="avg_fake", width=0.4, transform=trans2+plt.gca()
 plt.legend()
 plt.show()
 
-
-#TODO subtract the two histograms, find biggest difference and plot it on graph
