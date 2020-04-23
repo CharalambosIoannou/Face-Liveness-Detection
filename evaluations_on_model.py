@@ -1,5 +1,5 @@
 # USAGE
-# python train_liveness.py --dataset dataset --model liveness.model --le le.pickle
+# python train_network.py --dataset dataset --model liveness.model --le le.pickle
 
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
@@ -9,7 +9,7 @@ from keras.preprocessing.image import img_to_array
 
 matplotlib.use("Agg")
 
-from CNN.livenessnet import build
+from network import build
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator

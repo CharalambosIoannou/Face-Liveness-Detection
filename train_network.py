@@ -1,5 +1,5 @@
 # USAGE
-# python train_liveness.py --dataset dataset --model liveness.model --le le.pickle
+# python train_network.py --dataset dataset --model liveness.model --le le.pickle
 
 import imutils
 # set the matplotlib backend so figures can be saved in the background
@@ -10,7 +10,7 @@ from keras.preprocessing.image import img_to_array
 
 matplotlib.use("Agg")
 
-from CNN.livenessnet import build
+from network import build
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
@@ -145,9 +145,9 @@ opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model = build(width=32, height=32, depth=3,
 						  classes=2)
 
-# np.savetxt('feature_extraction/features_no_both_eyes.csv', model.predict(trainX, batch_size=BS), delimiter=',')
-# np.savetxt('feature_extraction/labels_no_both_eyes.csv', trainY, delimiter=',')
-#
+np.savetxt('feature_extraction/features_org.csv', model.predict(trainX, batch_size=BS), delimiter=',')
+np.savetxt('feature_extraction/labels_org.csv', trainY, delimiter=',')
+
 # np.savetxt('feature_extraction/features_no_both_eyes.txt', model.predict(trainX, batch_size=BS), delimiter=',')
 # np.savetxt('feature_extraction/labels_no_both_eyes.txt', trainY, delimiter=',')
 
@@ -184,74 +184,74 @@ print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS)
 
 print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
-model.save('after_edit.h5')
-f = open('after_edit.pickle', "wb")
+model.save('model_save.h5')
+f = open('model_save.pickle', "wb")
 f.write(pickle.dumps(enc))
 f.close()
 #%%
 
 
-dict = {}
-labels_t = ["ImposterRaw", "ClientRaw"]
-for label_name in labels_t:
-	print('Doing label: ' , label_name)
-	for imagePath in glob.iglob(f'dataset/test_raw/{label_name}/*/*.jpg'):
-			print(imagePath)
-			image = cv2.imread(imagePath)
-			frame = imutils.resize(image, width=600)
-			faces = faceCascade.detectMultiScale(
-			image,
-			scaleFactor=1.3,
-			minNeighbors=3,
-			minSize=(30, 30)
-			)
-			for (x, y, w, h) in faces :
-				cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-				#get pixel locations of the box to extract face
-				roi_color = frame[y :y + h, x :x + w]
-				face = frame[y :y + h, x :x + w]
-				face = cv2.resize(face, (32, 32))
-				face = img_to_array(face.astype("float") / 255.0)
-				face = np.expand_dims(face, axis=0)
-				preds = model.predict(face)[0]
-				j = np.argmax(preds)
-				label = [0, 1][j]
-				if (label == 1):
-					label='real'
-				else:
-					label = 'fake'
-			dict[imagePath] = label
-	
-print(dict)
-import pandas as pd
-df = pd.DataFrame(list(dict.items()), columns=['Filename', 'Prediction'])
-df.to_csv("raw.csv",index=False)
-
-dict1 = {}
-labels_t = ["ImposterFace", "ClientFace"]
-for label_name in labels_t:
-	print('Doing label: ' , label_name)
-	for imagePath in glob.iglob(f'dataset/test_detectedface/{label_name}/*/*.jpg'):
-			print(imagePath)
-			image = cv2.imread(imagePath)
-			frame = imutils.resize(image, width=600)
-			frame = cv2.resize(frame, (32, 32))
-			frame = img_to_array(frame.astype("float") / 255.0)
-			frame = np.expand_dims(frame, axis=0)
-			preds = model.predict(frame)[0]
-			j = np.argmax(preds)
-			label = [0,1][j]
-			if (label == 1):
-				label='real'
-				
-			else:
-				label = 'fake'
-			dict1[imagePath] = label
-	
-print(dict1)
-df = pd.DataFrame(list(dict1.items()), columns=['Filename', 'Prediction'])
-df.to_csv("detected.csv",index=False)
-
+# dict = {}
+# labels_t = ["ImposterRaw", "ClientRaw"]
+# for label_name in labels_t:
+# 	print('Doing label: ' , label_name)
+# 	for imagePath in glob.iglob(f'dataset/test_raw/{label_name}/*/*.jpg'):
+# 			print(imagePath)
+# 			image = cv2.imread(imagePath)
+# 			frame = imutils.resize(image, width=600)
+# 			faces = faceCascade.detectMultiScale(
+# 			image,
+# 			scaleFactor=1.3,
+# 			minNeighbors=3,
+# 			minSize=(30, 30)
+# 			)
+# 			for (x, y, w, h) in faces :
+# 				cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+# 				#get pixel locations of the box to extract face
+# 				roi_color = frame[y :y + h, x :x + w]
+# 				face = frame[y :y + h, x :x + w]
+# 				face = cv2.resize(face, (32, 32))
+# 				face = img_to_array(face.astype("float") / 255.0)
+# 				face = np.expand_dims(face, axis=0)
+# 				preds = model.predict(face)[0]
+# 				j = np.argmax(preds)
+# 				label = [0, 1][j]
+# 				if (label == 1):
+# 					label='real'
+# 				else:
+# 					label = 'fake'
+# 			dict[imagePath] = label
+#
+# print(dict)
+# import pandas as pd
+# df = pd.DataFrame(list(dict.items()), columns=['Filename', 'Prediction'])
+# df.to_csv("raw.csv",index=False)
+#
+# dict1 = {}
+# labels_t = ["ImposterFace", "ClientFace"]
+# for label_name in labels_t:
+# 	print('Doing label: ' , label_name)
+# 	for imagePath in glob.iglob(f'dataset/test_detectedface/{label_name}/*/*.jpg'):
+# 			print(imagePath)
+# 			image = cv2.imread(imagePath)
+# 			frame = imutils.resize(image, width=600)
+# 			frame = cv2.resize(frame, (32, 32))
+# 			frame = img_to_array(frame.astype("float") / 255.0)
+# 			frame = np.expand_dims(frame, axis=0)
+# 			preds = model.predict(frame)[0]
+# 			j = np.argmax(preds)
+# 			label = [0,1][j]
+# 			if (label == 1):
+# 				label='real'
+#
+# 			else:
+# 				label = 'fake'
+# 			dict1[imagePath] = label
+#
+# print(dict1)
+# df = pd.DataFrame(list(dict1.items()), columns=['Filename', 'Prediction'])
+# df.to_csv("detected.csv",index=False)
+#
 
 
 actual = model.predict(testX)

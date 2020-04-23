@@ -1,23 +1,20 @@
 import pickle
 import time
+from collections import Counter
 
 import cv2
-import dlib
 import imutils
 import numpy as np
-from imutils import face_utils
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 
-import time
-from collections import Counter
 
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 print("Loading model")
-model = load_model('with_chris1_85_straight.h5') #, custom_objects={"tf": tf}
-le = pickle.loads(open('with_chris1_85_straight.pickle', "rb").read())
+model = load_model('model_save.h5') #, custom_objects={"tf": tf}
+le = pickle.loads(open('model_save.pickle', "rb").read())
 
 
 print("Starting camera")
@@ -43,20 +40,24 @@ while True :
 		found_face = False
 		print("No face in front of the camera")
 		break
+	elif len(faces) > 1:
+		found_face = False
+		print("More than one face detected. Program stopping since a spoofing attack might occur")
+		break
 	for (x, y, w, h) in faces :
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 		#get pixel locations of the box to extract face
-		roi_color = frame[y :y + h, x :x + w]
 		face = frame[y :y + h, x :x + w]
 		# cv2.imshow("Frame1", face)
 		key = cv2.waitKey(1) & 0xFF
 		if (key == ord(" ")):
 			cv2.imwrite('saved_img '+str(int(round(preds[j] * 100)))+'.jpg',face)
 		face = cv2.resize(face, (32, 32))
-
+	
 		# cv2.imshow("Frame2", face)
 		face =img_to_array( face.astype("float") / 255.0)
 		face = np.expand_dims(face, axis=0)
+		
 		preds = model.predict(face)
 		preds = preds[0]
 		j = np.argmax(preds)
@@ -98,10 +99,8 @@ while True :
 		print("No face detected")
 		found_face = False
 		break
-
+print(pred)
 if (found_face):
-	print(len(pred))
-	print(pred)
 	y_pred1= Counter(pred)
 	most_common_y_pred = y_pred1.most_common(1)
 	majority_voting = most_common_y_pred[0][0]
