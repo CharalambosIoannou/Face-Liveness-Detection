@@ -10,6 +10,7 @@ from keras.preprocessing.image import img_to_array
 
 
 def run():
+	error = ""
 	faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 	
 	print("Loading model")
@@ -38,11 +39,13 @@ def run():
 		)
 		if len(faces) == 0:
 			found_face = False
-			print("No face in front of the camera")
+			error = "No face in front of the camera"
+			print(error)
 			break
 		elif len(faces) > 1:
 			found_face = False
-			print("More than one face detected. Program stopping since a spoofing attack might occur")
+			error = "More than one face detected. Program stopping since a spoofing attack might occur"
+			print(error)
 			break
 		for (x, y, w, h) in faces :
 			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -122,6 +125,11 @@ def run():
 				            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
 			cv2.imshow("res: " , img)
 			cv2.waitKey(0)
+		return "finished"
+	elif found_face== False and error=="No face in front of the camera":
+		return "no face"
+	else:
+		return "multiple faces"
 
 
 
