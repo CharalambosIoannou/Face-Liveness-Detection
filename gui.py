@@ -4,6 +4,9 @@ from liveness_from_video import run
 from liveness_from_photos import single_image
 from tkinter import messagebox
 
+# base code for tkinter obtain from https://stackoverflow.com/questions/45257305/how-to-divide-container-into-different-sets-of-columns-in-tkinter-gui/45257560#45257560
+
+
 def UploadAction(event=None):
 	filename = filedialog.askopenfilename()
 	print('Selected:', filename)
@@ -37,7 +40,7 @@ def real_time():
 	elif res =="multiple faces":
 		messagebox.showinfo("Error", "Multiple faces detected")
 root = tk.Tk()
-root.title('Steady State Data Processing')
+root.title('Facial Liveness Detection System')
 root.geometry('{}x{}'.format(900, 500))
 
 

@@ -66,8 +66,8 @@ def multiple_detection():
 	return b
 
 
-def single_image(image):
-	image = cv2.imread(image)
+def single_image(image_inp):
+	image = cv2.imread(image_inp)
 	image = imutils.resize(image, width=600)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	# detect faces in the grayscale frame
