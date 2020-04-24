@@ -66,8 +66,8 @@ def multiple_detection():
 	return b
 
 
-def single_image():
-	image = cv2.imread("test_img_fake.jpg")
+def single_image(image):
+	image = cv2.imread(image)
 	image = imutils.resize(image, width=600)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	# detect faces in the grayscale frame
@@ -109,5 +109,5 @@ def single_image():
 	cv2.waitKey(0)
 	return label
 
-single_image()
+# single_image("D:/University/Level 3/Computer Science Project/new_code/test_img_real.jpg")
 # multiple_detection()
