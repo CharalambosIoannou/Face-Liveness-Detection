@@ -22,3 +22,9 @@ F
 build_exe.bat,6\4\64769833380270d21fb5ab6414046021c80c4bb9
 8
 setup.py,8\e\8e2edce0d507e1297474f25c00cae94258db38d8
+U
+%tensor/hook-tensorflow_core.python.py,8\6\868a90e8a6fdcf08613e8e06f1ef01a6bc08f623
+H
+hooks/hook-tensorflow.py,d\6\d617459f8a215d1687ac2078602071821e01c62c
+6
+gui.py,a\8\a895a3c5719c169f000471bf708be4eb25842386

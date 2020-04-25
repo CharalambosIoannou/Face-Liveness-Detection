@@ -5,7 +5,6 @@ from collections import Counter
 import cv2
 import imutils
 import numpy as np
-import tensorflow as tf
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, \
@@ -16,7 +15,7 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 print("Loading model")
-model = load_model('model_save.h5' ,custom_objects={"tf": tf}) #, custom_objects={"tf": tf}
+model = load_model('model_save.h5') #, custom_objects={"tf": tf}
 le = pickle.loads(open('model_save.pickle', "rb").read())
 
 

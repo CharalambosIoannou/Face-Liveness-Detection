@@ -3,7 +3,7 @@ from tkinter import filedialog
 from liveness_from_video import run
 from liveness_from_photos import single_image
 from tkinter import messagebox
-
+from tkinter.ttk import Separator
 # base code for tkinter obtain from https://stackoverflow.com/questions/45257305/how-to-divide-container-into-different-sets-of-columns-in-tkinter-gui/45257560#45257560
 
 
@@ -39,6 +39,8 @@ def real_time():
 		messagebox.showinfo("Error", "No face detected")
 	elif res =="multiple faces":
 		messagebox.showinfo("Error", "Multiple faces detected")
+
+	
 root = tk.Tk()
 root.title('Facial Liveness Detection System')
 root.geometry('{}x{}'.format(900, 500))
@@ -60,8 +62,8 @@ labelIgn = tk.Label(root, text='Input Image Liveness Detection', width = 0, heig
 
 
 labelCps.grid(row = 1, column = 0, sticky='we')
-labelIgn.grid(row = 1, column = 1, sticky='we')
-labelCps2.grid(row = 1, column = 1, sticky='we')
+labelIgn.grid(row = 1, column = 2, sticky='we')
+labelCps2.grid(row = 1, column = 2, sticky='we')
 
 
 labelCps = tk.Label(root, text="Pressing the Run Liveness \n button  will open the device's camera", width = 0, height = 0, padx = 10, pady = 10)
@@ -76,7 +78,7 @@ labelCps.grid(row = 2, column = 0, sticky='we')
 cpsFrame = tk.Frame(root, width = 300, height = 100, relief = 'raised') # , padx = 100, pady=100
 
 ignFrame = tk.Frame(root, width = 300, height = 100, relief = 'raised') # , padx = 100, pady=100
-ignFrame.grid(row = 2, column = 1)
+ignFrame.grid(row = 2, column = 2)
 
 
 
@@ -89,7 +91,7 @@ labelCps1 = tk.Label(root, text="Pressing the Validate Image \n button  will mak
 labelIgn.grid(row = 0, column = 0)
 entryIgn.grid(row = 0, column = 1)
 button.grid(row = 0, column = 2)
-labelCps1.grid(row = 3, column = 1)
+labelCps1.grid(row = 3, column = 2)
 
 
 
@@ -101,7 +103,20 @@ applyButton = tk.Button(root, text = 'Run Liveness', padx = 30, pady = 15,comman
 applyButton.grid(row = 4, columnspan = 1)
 
 applyButton1 = tk.Button(root, text = 'Validate Image', padx = 30, pady = 15, command=get_file )
-applyButton1.grid(row = 4,column=1,  columnspan = 1)
+applyButton1.grid(row = 4,column=2,  columnspan = 1)
+
+
+root.grid_rowconfigure(5, pad = 50)
+
+
+dataButton = tk.Button(root ,text = 'Quit',anchor = 'center', padx = 15, pady = 15,command = root.quit,bg="lavender")
+# dataButton.grid(row = 5, column = 1, padx=100)
+dataButton.place(relx=0.475, rely=0.93, anchor='se')
+# dataButton.place(relx=0.95, rely=0.9, anchor='se')
+
+sep = Separator(root, orient='vertical')
+sep.grid(column=1, row=1, rowspan=4,padx=20, sticky='ns')
+
 
 root.mainloop()
 
