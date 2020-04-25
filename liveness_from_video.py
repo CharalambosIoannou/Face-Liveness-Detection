@@ -128,7 +128,7 @@ def run():
 		return "finished"
 	elif found_face== False and error=="No face in front of the camera":
 		return "no face"
-	else:
+	elif found_face== False and error=="More than one face detected. Program stopping since a spoofing attack might occur":
 		return "multiple faces"
 
 
