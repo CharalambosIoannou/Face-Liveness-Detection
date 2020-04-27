@@ -1,10 +1,7 @@
-# USAGE
-# python train_network.py --dataset dataset --model liveness.model --le le.pickle
 
 import imutils
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
-from keras.preprocessing.image import img_to_array
 
 
 
@@ -183,7 +180,7 @@ H = model.fit_generator(augm,
 print("[INFO] evaluating network...")
 predictions = model.predict(testX, batch_size=BS)
 
-print("[INFO] serializing network to '{}'...".format('glasses_model.h5'))
+print("[INFO] serializing network to '{}'...".format('model_save.h5'))
 model.save('model_save.h5')
 f = open('model_save.pickle', "wb")
 f.write(pickle.dumps(enc))

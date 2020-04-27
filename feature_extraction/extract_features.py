@@ -1,28 +1,18 @@
-import imutils
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
-from keras.preprocessing.image import img_to_array
+
+
 
 matplotlib.use("Agg")
 
 from network import build
 from sklearn.model_selection import train_test_split
-from keras.preprocessing.image import ImageDataGenerator
-import matplotlib.pyplot as plt
 import numpy as np
-import pickle
 import cv2
-from keras.optimizers import Adam
 import time
 from keras.callbacks import TensorBoard
-from sklearn.metrics import classification_report
 import glob
-import os.path
 from os import path
-import keras
-from keras.utils.vis_utils import plot_model
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef, \
-	roc_curve, auc
 from sklearn.preprocessing import OneHotEncoder
 #%%
 # initialize the initial learning rate, batch size, and number of

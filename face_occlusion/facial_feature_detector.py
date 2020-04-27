@@ -51,40 +51,120 @@ def occlude_region(img,region):
 
 # image = cv2.imread("../../dataset/raw/ClientRaw/0001/0001_00_00_01_0.jpg")
 
-import os
-labels1 = ["ImposterFace", "ClientFace"]
-os.mkdir('../dataset/face_no_mouth')
-for label_name in labels1:
-	print('Doing label: ' , label_name)
-	os.mkdir('../dataset/face_no_mouth/'+label_name)
-	sub_dirs_imp = [x[0][-4:] for x in os.walk("../dataset/Detectedface/ImposterFace")][1:]
-	sub_dirs_client = [x[0][-4:] for x in os.walk("../dataset/Detectedface/ClientFace")][1:]
-	for i in sub_dirs_imp:
-		print("here")
-		print(i)
-		try:
-			os.mkdir('../dataset/face_no_mouth/'+label_name+ "/" + i)
-		except FileExistsError:
-			continue
-			
-	for i in sub_dirs_client:
-		print("here1")
-		try:
-			os.mkdir('../dataset/face_no_mouth/'+label_name+ "/" + i)
-		except FileExistsError:
-			continue
-	print("finished with dirs")
-	for imagePath in glob.iglob(f'../dataset/Detectedface/{label_name}/*/*.jpg'):
-		print(imagePath)
-		# extract the class label from the filename, load the image and
-		# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
-		image = cv2.imread(imagePath)
-		try:
-			output = occlude_region(image,"mouth") #133 not recongised
-		except IndexError:
-			continue
-		# cv2.imshow("Image", output)
-		cv2.imwrite('../dataset/face_no_mouth/'+label_name + "/"+ imagePath[imagePath.find('00'): imagePath.find('00') + 4] + "/" +os.path.basename(imagePath),output)
+def run(occlude_part):
+	if (occlude_part == "mouth"):
+		string = "face_no_mouth"
+	elif (occlude_part == "nose"):
+		string = "face_no_nose"
+	elif (occlude_part == "left_eye"):
+		string = "face_no_left_eye"
+	elif (occlude_part == "right_eye"):
+		string = "face_no_right_eye"
+	elif (occlude_part == "both_eyes"):
+		string = "face_both_eyes"
+	import os
+	labels1 = ["ImposterFace", "ClientFace"]
+	os.mkdir(f'../dataset/{string}')
+	for label_name in labels1:
+		print('Doing label: ' , label_name)
+		os.mkdir(f'../dataset/{string}/'+label_name)
+		sub_dirs_imp = [x[0][-4:] for x in os.walk("../dataset/Detectedface/ImposterFace")][1:]
+		sub_dirs_client = [x[0][-4:] for x in os.walk("../dataset/Detectedface/ClientFace")][1:]
+		for i in sub_dirs_imp:
+			print("here")
+			print(i)
+			try:
+				os.mkdir(f'../dataset/{string}/'+label_name+ "/" + i)
+			except FileExistsError:
+				continue
+				
+		for i in sub_dirs_client:
+			print("here1")
+			try:
+				os.mkdir(f'../dataset/{string}/'+label_name+ "/" + i)
+			except FileExistsError:
+				continue
+		print("finished with dirs")
+		for imagePath in glob.iglob(f'../dataset/Detectedface/{label_name}/*/*.jpg'):
+			print(imagePath)
+			# extract the class label from the filename, load the image and
+			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
+			image = cv2.imread(imagePath)
+			try:
+				
+				if (occlude_part == "both_eyes"):
+					output1 = occlude_region(image,"left_eye") #133 not recongised
+					output = occlude_region(output1,"right_eye") #133 not recongised
+				else:
+					output = occlude_region(image,occlude_part)
+			except IndexError:
+				continue
+			# cv2.imshow("Image", output)
+			# cv2.imwrite('../dataset/face_no_mouth/'+label_name + "/"+ imagePath[imagePath.find('00'): imagePath.find('00') + 4] + "/" +os.path.basename(imagePath),output)
+			cv2.imwrite(f'../dataset/{string}/'+label_name + "/"+ imagePath[imagePath.find('00'): imagePath.find('00') + 4] + "/" +os.path.basename(imagePath),output)
 
 
+def run_demo(occlude_part):
+	if (occlude_part == "mouth"):
+		string = "face_no_mouth"
+	elif (occlude_part == "nose"):
+		string = "face_no_nose"
+	elif (occlude_part == "left_eye"):
+		string = "face_no_left_eye"
+	elif (occlude_part == "right_eye"):
+		string = "face_no_right_eye"
+	elif (occlude_part == "both_eyes"):
+		string = "face_both_eyes"
+	import os
+	labels1 = ["ImposterFace", "ClientFace"]
+	os.mkdir(f'{string}')
+	for label_name in labels1:
+		print('Doing label: ' , label_name)
+		os.mkdir(f'{string}/'+label_name)
+		sub_dirs_imp = [x[0][-4:] for x in os.walk("../dataset/test_detectedface/ImposterFace")][1:]
+		sub_dirs_client = [x[0][-4:] for x in os.walk("../dataset/test_detectedface/ClientFace")][1:]
+		for i in sub_dirs_imp:
+			print("here")
+			print(i)
+			try:
+				os.mkdir(f'{string}/'+label_name+ "/" + i)
+			except FileExistsError:
+				continue
+				
+		for i in sub_dirs_client:
+			print("here1")
+			try:
+				os.mkdir(f'{string}/'+label_name+ "/" + i)
+			except FileExistsError:
+				continue
+		print("finished with dirs")
+		counter = 0
+		for imagePath in glob.iglob(f'../dataset/test_detectedface/{label_name}/*/*.jpg'):
+			print(imagePath)
+			# extract the class label from the filename, load the image and
+			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
+			image = cv2.imread(imagePath)
+			try:
+				
+				if (occlude_part == "both_eyes"):
+					output1 = occlude_region(image,"left_eye") #133 not recongised
+					output = occlude_region(output1,"right_eye") #133 not recongised
+				elif (occlude_part == "nose"):
+					if (counter < 18 and label_name =="ClientFace"):
+						print("skipping")
+						counter = counter + 1
+						continue
+					else:
+						output = occlude_region(image,occlude_part)
+						
+				else:
+					output = occlude_region(image,occlude_part)
+			except IndexError:
+				continue
+			# cv2.imshow("Image", output)
+			# cv2.imwrite('../dataset/face_no_mouth/'+label_name + "/"+ imagePath[imagePath.find('00'): imagePath.find('00') + 4] + "/" +os.path.basename(imagePath),output)
+			cv2.imwrite(f'{string}/'+label_name + "/"+ imagePath[imagePath.find('00'): imagePath.find('00') + 4] + "/" +os.path.basename(imagePath),output)
 
+
+# run()
+run_demo("nose")

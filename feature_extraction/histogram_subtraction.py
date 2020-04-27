@@ -159,6 +159,7 @@ c = ['No Left Eye','No Right Eye', 'No nose','No mouth', 'No both eyes']
 
 d = []
 d1 = []
+sum_abs = []
 for k in range(0,len(a)):
 	avg_live = []
 	avg_fake = []
@@ -176,10 +177,11 @@ for k in range(0,len(a)):
 	differences = []
 	for p in range(0,len(avg_live)):
 		diff = avg_live[p][1] - avg_fake[p][1]
-		differences.append(diff)
+		differences.append(abs(diff))
 	print(differences)
 	d.append((c[k], max(differences)))
 	d1.append((c[k], min(differences)))
+	sum_abs.append((c[k],sum(differences)))
 	items1, counts1 = zip(*avg_live)
 	items2, counts2 = zip(*avg_fake)
 	plt.plot(items1+items2, [0.01]*len(items1+items2), visible=False)
@@ -204,19 +206,29 @@ for k in range(0,len(a)):
 	plt.savefig(f'imgs/Original-{c[k]}(Real-Fake).png', dpi=700)
 	plt.clf()
 
-print(d)
-print(d1)
-l = []
+# print(d)
+# print(d1)
+names1 = []
 l1 = []
-for i in range(0,len(d)):
-	l.append(d[i][1])
-for i in range(0,len(d1)):
-	l1.append(d1[i][1])
-highest = max(l)
-lowest = min(l1)
-print(highest)
-print(lowest)
+# for i in range(0,len(d)):
+# 	l.append(d[i][1])
+# for i in range(0,len(d1)):
+# 	l1.append(d1[i][1])
+# highest = max(l)
+# lowest = min(l1)
+# print(highest)
+# print(lowest)
+print("sum_abs: ",sum_abs)
+for i in range(0,len(sum_abs)):
+	l1.append(sum_abs[i][1])
+	names1.append(sum_abs[i][0])
+# highest = max(l1)
+# print(highest)
 
+
+plt.title("Sum of absolute Differences")
+plt.bar(names1, l1)
+plt.show()
 # avg_live = []
 # avg_fake = []
 # for i in range(0, len(mean_live)):

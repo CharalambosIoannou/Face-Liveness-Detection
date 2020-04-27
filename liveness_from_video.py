@@ -37,16 +37,17 @@ def run():
 				minNeighbors=3,
 				minSize=(30, 30)
 		)
+		# print(len(faces))
 		if len(faces) == 0:
 			found_face = False
 			error = "No face in front of the camera"
-			print(error)
+			print("No face in front of the camera")
 			break
-		elif len(faces) > 1:
-			found_face = False
-			error = "More than one face detected. Program stopping since a spoofing attack might occur"
-			print(error)
-			break
+		# elif len(faces) > 1:
+		# 	found_face = False
+		#   error = "More than one face detected. Program stopping since a spoofing attack might occur"
+		# 	print("More than one face detected. Program stopping since a spoofing attack might occur")
+		# 	break
 		for (x, y, w, h) in faces :
 			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 			#get pixel locations of the box to extract face
@@ -130,6 +131,6 @@ def run():
 		return "no face"
 	elif found_face== False and error=="More than one face detected. Program stopping since a spoofing attack might occur":
 		return "multiple faces"
-
-
-
+	
+	
+# run()

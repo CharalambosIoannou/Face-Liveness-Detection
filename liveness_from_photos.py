@@ -8,18 +8,16 @@ from keras.models import load_model
 from keras.preprocessing.image import img_to_array
 import matplotlib.pyplot as plt
 import glob
+from collections import Counter
 
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-print("Loading no_glasses_model")
 model = load_model('model_save.h5')
 le = pickle.loads(open('model_save.pickle', "rb").read())
-
+f = []
 def multiple_detection():
-	a = ['face_no_left_eye','face_no_right_eye','face_no_mouth','face_no_nose']
 	a= ['test_detectedface','test_face_both_eyes','test_face_no_left_eye','test_face_no_right_eye','test_face_no_mouth','test_face_no_nose']
-	b = {}
 	
 	for dataset in a:
 		print("[INFO] loading images...")
@@ -42,28 +40,25 @@ def multiple_detection():
 					preds = model.predict(frame)[0]
 					j = np.argmax(preds)
 					label = [0,1][j]
-					if (label == 1):
-						label='real'
-					else:
-						label = 'fake'
 					if (label_name == "ImposterFace"):
-						label1 = 'fake'
+						label1 = 0
 					else:
-						label1='real'
+						label1= 1
+					actual.append(label1)
+					expected.append(label)
 					dict[imagePath] = label
 					real_fake.append(label1)
-	
-		res = {}
-		import pandas as pd
-		df = pd.DataFrame(list(dict.items()), columns=['Filename', 'Prediction'])
-		df.insert(2, "Actual", real_fake, True)
-		df['same'] = np.where((df['Prediction'] == df['Actual']),"y","n")
-		acc = df[(df.same == 'y')].count() /  (df[(df.same == 'y')].count() + df[(df.same == 'n')].count())
-		print(df)
-		print(acc)
-		b[dataset] = acc
-	print(b)
-	return b
+				
+		counter = 0
+		for i in range (0,len(expected)):
+			if (expected[i] == actual[i]):
+				counter = counter +1
+		
+		
+		acc = round((counter / len(expected)) * 100,2)
+		f.append((dataset,acc))
+	print(f)
+	return f
 
 
 def single_image(image_inp):
@@ -109,5 +104,6 @@ def single_image(image_inp):
 	cv2.waitKey(0)
 	return label
 
-# single_image("D:/University/Level 3/Computer Science Project/new_code/test_img_real.jpg")
+# single_image()
 # multiple_detection()
+
