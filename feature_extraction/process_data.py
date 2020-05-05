@@ -48,14 +48,14 @@ import matplotlib.transforms
 items1, counts1 = zip(*avg_live)
 items2, counts2 = zip(*avg_fake)
 print(items1)
-plt.plot(items1+items2, [0.25]*len(items1+items2), visible=False)
+plt.plot(items1+items2, [0.07]*len(items1+items2), visible=False)
 
 trans1 = matplotlib.transforms.Affine2D().translate(-0.2,0)
 trans2 = matplotlib.transforms.Affine2D().translate(+0.2,0)
-
+# plt.rcParams.update({'font.size': 25})
 plt.bar(items1, counts1, label="avg_live", width=0.4, transform=trans1+plt.gca().transData)
 plt.bar(items2, counts2, label="avg_fake", width=0.4, transform=trans2+plt.gca().transData)
-plt.legend()
-
-# plt.savefig(f'imgs/final_h.png', dpi=700)
+plt.legend(fontsize = 15)
+plt.title("Real/fake features from original dataset",fontsize = 25)
+# plt.savefig(f'imgs/final_h.png', dpi=1500)
 plt.show()
