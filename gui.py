@@ -35,6 +35,7 @@ def get_file():
 		
 def real_time():
 	res = run()
+	print("res: " ,res)
 	if (res == "no face"):
 		messagebox.showinfo("Error", "No face detected")
 	elif res =="multiple faces":
@@ -119,7 +120,3 @@ sep.grid(column=1, row=1, rowspan=4,padx=20, sticky='ns')
 
 
 root.mainloop()
-
-
-
-

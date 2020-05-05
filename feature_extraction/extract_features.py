@@ -1,7 +1,4 @@
-# set the matplotlib backend so figures can be saved in the background
 import matplotlib
-
-
 
 matplotlib.use("Agg")
 
@@ -15,12 +12,10 @@ import glob
 from os import path
 from sklearn.preprocessing import OneHotEncoder
 #%%
-# initialize the initial learning rate, batch size, and number of
-# epochs to train for
+
 INIT_LR = 1e-4
 BS = 10
 EPOCHS = 60
-# Define the Keras TensorBoard callback.
 NAME = "Live vs Fake photos" + str(int(time.time()))
 tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")

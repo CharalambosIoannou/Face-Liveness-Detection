@@ -194,7 +194,7 @@ for k in range(0,len(a)):
 	plt.legend()
 	#
 	# plt.show()
-	plt.savefig(f'imgs/Original-{c[k]}.png', dpi=700)
+	# plt.savefig(f'imgs/Original-{c[k]}.png', dpi=700)
 	plt.clf()
 	
 	names = [j for j in range(0,128)]
@@ -203,9 +203,9 @@ for k in range(0,len(a)):
 
 	plt.title("Original-" + c[k] + "(Real - Fake)")
 	plt.bar(names, values)
-	plt.savefig(f'imgs/Original-{c[k]}(Real-Fake).png', dpi=700)
+	# plt.savefig(f'imgs/Original-{c[k]}(Real-Fake).png', dpi=700)
 	plt.clf()
-
+plt.rcParams.update({'font.size': 25})
 # print(d)
 # print(d1)
 names1 = []
@@ -229,149 +229,3 @@ for i in range(0,len(sum_abs)):
 plt.title("Sum of absolute Differences")
 plt.bar(names1, l1)
 plt.show()
-# avg_live = []
-# avg_fake = []
-# for i in range(0, len(mean_live)):
-# 	avg_live.append((i,mean_live[i]))
-# 	# print(i)
-# for i in range(0, len(mean_fake)):
-# 	avg_fake.append((i,mean_fake[i]))
-#
-# print(avg_live)
-# print(avg_fake)
-# 	# print(i)
-# import matplotlib.transforms
-#
-#
-# items1, counts1 = zip(*avg_live)
-# items2, counts2 = zip(*avg_fake)
-# print(items1)
-# plt.plot(items1+items2, [0.25]*len(items1+items2), visible=False)
-#
-# trans1 = matplotlib.transforms.Affine2D().translate(-0.2,0)
-# trans2 = matplotlib.transforms.Affine2D().translate(+0.2,0)
-#
-# plt.bar(items1, counts1, label="avg_live", width=0.4, transform=trans1+plt.gca().transData)
-# plt.bar(items2, counts2, label="avg_fake", width=0.4, transform=trans2+plt.gca().transData)
-# plt.legend()
-# plt.show()
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-# live_face = []
-# fake_face = []
-# for index, row in labels_original.iterrows():
-# 	if (row[1] == 1):
-# 		live_face.append(original.iloc[index])
-# 	else:
-# 		fake_face.append(original.iloc[index])
-# live = pd.DataFrame(live_face)
-# fake = pd.DataFrame(fake_face)
-#
-# live_face_both_eyes = []
-# fake_face_both_eyes = []
-# for index, row in labels_no_both_eyes.iterrows():
-# 	if (row[1] == 1):
-# 		live_face_both_eyes.append(no_both_eyes.iloc[index])
-# 	else:
-# 		fake_face_both_eyes.append(no_both_eyes.iloc[index])
-# live_both_eyes = pd.DataFrame(live_face_both_eyes)
-# fake_both_eyes = pd.DataFrame(fake_face_both_eyes)
-#
-# org_w_right_eye_live = avg_and_sub_two_dataframes(live,live_both_eyes)
-# org_w_right_eye_fake = avg_and_sub_two_dataframes(fake,fake_both_eyes)
-#
-# avg_live_both_eyes = []
-# avg_fake_both_eyes = []
-# for i in range(0, len(org_w_right_eye_live)):
-# 	avg_live_both_eyes.append((i,org_w_right_eye_live[i]))
-# 	# print(i)
-# for i in range(0, len(org_w_right_eye_fake)):
-# 	avg_fake_both_eyes.append((i,org_w_right_eye_fake[i]))
-#
-#
-# import matplotlib.transforms
-#
-#
-# items1, counts1 = zip(*avg_live_both_eyes)
-# items2, counts2 = zip(*avg_fake_both_eyes)
-# print(items1)
-# plt.plot(items1+items2, [0.25]*len(items1+items2), visible=False)
-#
-# trans1 = matplotlib.transforms.Affine2D().translate(-0.2,0)
-# trans2 = matplotlib.transforms.Affine2D().translate(+0.2,0)
-#
-# plt.bar(items1, counts1, label="avg_live", width=0.4, transform=trans1+plt.gca().transData)
-# plt.bar(items2, counts2, label="avg_fake", width=0.4, transform=trans2+plt.gca().transData)
-# plt.legend()
-# plt.show()
-#
-#
-# # org_w_left_eye = avg_and_sub_two_dataframes(original,no_left_eye)
-# # print(org_w_left_eye)
-# #
-# # org_w_mouth= avg_and_sub_two_dataframes(original,no_mouth)
-# # print(org_w_mouth)
-# #
-# # org_w_nose = avg_and_sub_two_dataframes(original,no_nose)
-# # print(org_w_nose)
-# #
-# # org_w_both_eyes = avg_and_sub_two_dataframes(original,no_both_eyes)
-# # print(org_w_both_eyes)
-# #
-# # print("max org_w_right_eye:" ,max(org_w_right_eye) )
-# # print("max org_w_left_eye:" ,max(org_w_left_eye) )
-# # print("max org_w_mouth:" ,max(org_w_mouth) )
-# # print("max org_w_nose:" ,max(org_w_nose) )
-# # print("max org_w_both_eyes:" ,max(org_w_both_eyes) )
-# # print("***********************")
-# # print("min org_w_right_eye:" ,min(org_w_right_eye) )
-# # print("min org_w_left_eye:" ,min(org_w_left_eye) )
-# # print("min org_w_mouth:" ,min(org_w_mouth) )
-# # print("min org_w_nose:" ,min(org_w_nose) )
-# # print("min org_w_both_eyes:" ,min(org_w_both_eyes) )
-# #
-# # a = ['org_w_right_eye','org_w_left_eye','org_w_mouth','org_w_nose','org_w_both_eyes']
-# # b = [org_w_right_eye,org_w_left_eye,org_w_mouth,org_w_nose,org_w_both_eyes]
-# # c = ['No Right Eye','No Left Eye', 'No mouth', 'No nose', 'No both eyes']
-# #
-# # for i in range(len(a)):
-# # 	items1 = b[i]
-# # 	counts1 = [i for i in range(128)]
-# #
-# #
-# # 	trans1 = matplotlib.transforms.Affine2D().translate(-0.2,0)
-# # 	trans2 = matplotlib.transforms.Affine2D().translate(+0.2,0)
-# #
-# # 	plt.bar(counts1,items1 , width=0.8, transform=trans1+plt.gca().transData)
-# # 	plt.title(f"Original-{c[i]}. \n Max val:{round(max(items1),2)} / Min val: {round(min(items1),2)}")
-# # 	plt.savefig(f'imgs/{a[i]}.png', dpi=700)
-# # 	plt.legend()
-# # 	plt.show()
-# #
-# #
-# # # This determines features in vector space. Understand which feature is related to where
-# # #TODO check LSTM -> Time series model

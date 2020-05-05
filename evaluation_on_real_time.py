@@ -8,8 +8,6 @@ import numpy as np
 import tensorflow as tf
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array
-from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, \
-	matthews_corrcoef, classification_report
 
 
 

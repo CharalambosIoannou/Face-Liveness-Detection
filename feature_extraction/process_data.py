@@ -56,6 +56,6 @@ trans2 = matplotlib.transforms.Affine2D().translate(+0.2,0)
 plt.bar(items1, counts1, label="avg_live", width=0.4, transform=trans1+plt.gca().transData)
 plt.bar(items2, counts2, label="avg_fake", width=0.4, transform=trans2+plt.gca().transData)
 plt.legend()
-# plt.show()
-plt.savefig(f'imgs/final_h.png', dpi=700)
 
+# plt.savefig(f'imgs/final_h.png', dpi=700)
+plt.show()

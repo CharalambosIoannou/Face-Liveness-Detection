@@ -1,11 +1,7 @@
-# USAGE
-# python train_network.py --dataset dataset --model liveness.model --le le.pickle
-
-# set the matplotlib backend so figures can be saved in the background
+import imutils
 import matplotlib
 
-import imutils
-from keras.preprocessing.image import img_to_array
+
 
 matplotlib.use("Agg")
 
@@ -14,21 +10,16 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import np_utils
-import matplotlib.pyplot as plt
 import numpy as np
-import pickle
 import cv2
 from keras.optimizers import Adam
-import time
 from keras.callbacks import TensorBoard
 import glob
-from keras.layers import LSTM,ConvLSTM2D, Lambda
 
 from keras.layers.normalization import BatchNormalization
 from keras.layers.core import Activation
 from keras.layers.core import Dropout
 from keras.layers.core import Dense
-from keras.utils.vis_utils import plot_model
 from keras.layers import LeakyReLU
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, cohen_kappa_score, matthews_corrcoef,classification_report
 import pandas as pd
