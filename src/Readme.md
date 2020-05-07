@@ -47,4 +47,7 @@ Bat file used to run the program on Windows
 ## train_network.py
 The code to train the network and obtain evaluation metrics
 
+## shape_predictor_68_face_landmarks.dat
+This file is the facial landmark predictor used for face occlusion
+
 
