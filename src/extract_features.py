@@ -1,3 +1,7 @@
+"""
+To run file: type in a terminal python extract_features.py
+
+"""
 import matplotlib
 
 matplotlib.use("Agg")
@@ -6,22 +10,14 @@ from network import build
 from sklearn.model_selection import train_test_split
 import numpy as np
 import cv2
-import time
-from keras.callbacks import TensorBoard
 import glob
 from os import path
 from sklearn.preprocessing import OneHotEncoder
 #%%
 
-INIT_LR = 1e-4
+
 BS = 10
-EPOCHS = 60
-NAME = "Live vs Fake photos" + str(int(time.time()))
-tensorboard_callback = TensorBoard(log_dir="logs\\{}".format(NAME))
-faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
 common_img_paths = []
-
 def get_org_images_detected(single_dataset) :
 	print("[INFO] loading images...")
 	data = []
@@ -34,8 +30,6 @@ def get_org_images_detected(single_dataset) :
 				if (path.exists(imagePath.replace("Detectedface", "face_both_eyes")) and path.exists(imagePath.replace("Detectedface", "face_no_left_eye")) and path.exists(imagePath.replace("Detectedface", "face_no_mouth")) and path.exists(imagePath.replace("Detectedface", "face_no_nose")) and path.exists(imagePath.replace("Detectedface", "face_no_right_eye"))):
 					print(imagePath)
 					common_img_paths.append(imagePath)
-					# extract the class label from the filename, load the image and
-					# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
 					image = cv2.imread(imagePath)
 					
 					# print(imagePath)
@@ -60,14 +54,12 @@ def get_images_detected(single_dataset) :
 		for imagePath in glob.iglob(f'../dataset/{single_dataset}/{label_name}/*/*.jpg'):
 			if (imagePath.replace(f"{single_dataset}", "Detectedface") in common_img_paths):
 				print(imagePath)
-				# extract the class label from the filename, load the image and
-				# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
+
 				image = cv2.imread(imagePath)
 				
 				# print(imagePath)
 				image = cv2.resize(image, (32, 32))
 				
-				# update the data_features and labels lists, respectively
 				data.append(image)
 				if (label_name == 'ImposterFace'):
 					labels.append([0])

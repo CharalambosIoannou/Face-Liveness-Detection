@@ -1,8 +1,9 @@
-## The datasets can be downloaded from:
+﻿## The occluded datasets can be downloaded from:
 
-https://drive.google.com/drive/folders/1vTzao_bvExaCpel7BbxLA4EIagoYai3v?usp=sharing
+https://drive.google.com/drive/folders/1DgyrFbQOhKI9BtmbejbKhVBnwvY6f3ip?usp=sharing
 
-The structure of this folder should be: 
+After you download the zip file extract its contents in the dataset folder (this directory). 
+The structure of this folder should be the same as the structure shown below:
 
 ```
 dataset

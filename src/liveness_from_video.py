@@ -1,3 +1,11 @@
+"""
+To run file:
+Uncomment line 139
+type in a terminal python liveness_from_video.py
+When closing this file comment line 139 in order for the gui.py file to run properly
+
+"""
+
 import pickle
 import time
 from collections import Counter
@@ -30,7 +38,6 @@ def run():
 		ret, frame = vs.read()
 		frame = imutils.resize(frame, width=600)
 		gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-		# detect faces in the grayscale frame
 		faces = faceCascade.detectMultiScale(
 				gray,
 				scaleFactor=1.3,
@@ -50,7 +57,6 @@ def run():
 		# 	break
 		for (x, y, w, h) in faces :
 			cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-			#get pixel locations of the box to extract face
 			face = frame[y :y + h, x :x + w]
 			# cv2.imshow("Frame1", face)
 			key = cv2.waitKey(1) & 0xFF
@@ -72,7 +78,6 @@ def run():
 			else:
 				flag = True
 				break
-			# draw the label and bounding box on the frame
 			if (label == 1):
 				label='real'
 			else:
@@ -90,12 +95,10 @@ def run():
 	
 		if flag:
 			break
-		# show the output frame and wait for a key press
 		cv2.imshow("Frame", frame)
 	
 	
 	
-		# if the `q` key was pressed, break from the loop
 		try:
 			if key == ord("q") :
 				break

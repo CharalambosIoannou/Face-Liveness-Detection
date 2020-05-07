@@ -1,8 +1,11 @@
-import pandas as pd
-import numpy as np
+"""
+To run file: type in a terminal python histogram_subtraction.py
+The figures are saved to feature_extraction/imgs folder
+
+"""
+
 import matplotlib
-from matplotlib import pyplot as plt
-import itertools
+
 
 
 def avg_and_sub_two_dataframes(df1,df2):
@@ -194,7 +197,7 @@ for k in range(0,len(a)):
 	plt.legend()
 	#
 	# plt.show()
-	# plt.savefig(f'imgs/Original-{c[k]}.png', dpi=700)
+	plt.savefig(f'../feature_extraction/imgs/Original-{c[k]}.png', dpi=700)
 	plt.clf()
 	
 	names = [j for j in range(0,128)]
@@ -203,21 +206,14 @@ for k in range(0,len(a)):
 
 	plt.title("Original-" + c[k] + "(Real - Fake)")
 	plt.bar(names, values)
-	# plt.savefig(f'imgs/Original-{c[k]}(Real-Fake).png', dpi=700)
+	plt.savefig(f'../feature_extraction/imgs/Original-{c[k]}(Real-Fake).png', dpi=700)
 	plt.clf()
 plt.rcParams.update({'font.size': 25})
 # print(d)
 # print(d1)
 names1 = []
 l1 = []
-# for i in range(0,len(d)):
-# 	l.append(d[i][1])
-# for i in range(0,len(d1)):
-# 	l1.append(d1[i][1])
-# highest = max(l)
-# lowest = min(l1)
-# print(highest)
-# print(lowest)
+
 print("sum_abs: ",sum_abs)
 for i in range(0,len(sum_abs)):
 	l1.append(sum_abs[i][1])
@@ -228,4 +224,5 @@ for i in range(0,len(sum_abs)):
 
 plt.title("Sum of absolute Differences")
 plt.bar(names1, l1)
+plt.savefig(f'../feature_extraction/imgs/sum_abs_diff.png', dpi=700)
 plt.show()

@@ -1,3 +1,8 @@
+"""
+To run file: type in a terminal python evaluations_on_real_time.py
+
+"""
+
 import pickle
 import time
 from collections import Counter
@@ -31,7 +36,6 @@ while True :
 	ret, frame = vs.read()
 	frame = imutils.resize(frame, width=600)
 	gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-	# detect faces in the grayscale frame
 	faces = faceCascade.detectMultiScale(
 			gray,
 			scaleFactor=1.3,
@@ -40,7 +44,6 @@ while True :
 	)
 	for (x, y, w, h) in faces :
 		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-		#get pixel locations of the box to extract face
 		roi_color = frame[y :y + h, x :x + w]
 		face = frame[y :y + h, x :x + w]
 		key = cv2.waitKey(1) & 0xFF
@@ -63,7 +66,6 @@ while True :
 			flag = True
 			break
 		
-		# draw the label and bounding box on the frame
 		if (label == 1):
 			label='real'
 		else:
@@ -80,9 +82,7 @@ while True :
 		              (0, 0, 0), 2)
 	if flag:
 		break
-	# show the output frame and wait for a key press
 	cv2.imshow("Frame", frame)
-	# if the `q` key was pressed, break from the loop
 	if key == ord("q") :
 		break
 

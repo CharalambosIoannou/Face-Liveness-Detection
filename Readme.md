@@ -46,12 +46,16 @@ This folder contains images used for the project.
 
 ## How to run
 1) Install required dependencies using the command `pip install --user -r requirements.txt`. If this fails for some reason then do `pip install <library name>` on all the libraries mentioned above one by one.
-2) If you are using Windows navigate to src folder and click on `run.bat` file
-3) If you are using Linux navigate to src folder and click on `run.sh` file
-4) When the graphical user inteface opens there are two options:
+2) Navigate to src folder and click on `run.bat` file
+3) When the graphical user inteface opens there are two options:
     * Perform real-time liveness detection which is going to open the laptop camera
     * Perform liveness detection from an image you want to choose
-5) Press one of the buttons according to which liveness detection you want to carry out
+4) Press one of the buttons according to which liveness detection you want to carry out
+
+
+### Note:
+
+If the pip installation of Dlib outputs an error requiring CMake then first do `pip install cmake` and then do `pip install dlib`
 
  
 

@@ -1,10 +1,19 @@
+"""
+To run file: type in a terminal python gui.py
+
+"""
+
 import tkinter as tk
 from tkinter import filedialog
-from liveness_from_video import run
-from liveness_from_photos import single_image
 from tkinter import messagebox
 from tkinter.ttk import Separator
-# base code for tkinter obtain from https://stackoverflow.com/questions/45257305/how-to-divide-container-into-different-sets-of-columns-in-tkinter-gui/45257560#45257560
+
+from liveness_from_photos import single_image
+from liveness_from_video import run
+
+
+
+# base code for tkinter obtained from https://stackoverflow.com/questions/45257305/how-to-divide-container-into-different-sets-of-columns-in-tkinter-gui/45257560#45257560
 
 
 def UploadAction(event=None):

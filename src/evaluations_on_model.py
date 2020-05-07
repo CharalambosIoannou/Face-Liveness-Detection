@@ -1,15 +1,17 @@
+"""
+To run file: type in a terminal python evaluations_on_model.py
+
+"""
 import imutils
 import matplotlib
 
 
 
 matplotlib.use("Agg")
-
+from sklearn.preprocessing import OneHotEncoder
 from network import build
-from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
-from keras.utils import np_utils
 import numpy as np
 import cv2
 from keras.optimizers import Adam
@@ -25,8 +27,7 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_
 import pandas as pd
 import time
 #%%
-# initialize the initial learning rate, batch size, and number of
-# epochs to train for
+
 INIT_LR = 1e-4
 BS = 10
 # EPOCHS = 5
@@ -45,8 +46,7 @@ def get_images_raw() :
 		print('Doing label: ', label_name)
 		for imagePath in glob.iglob(f'../dataset/raw/{label_name}/*/*.jpg') :
 			print(imagePath)
-			# extract the class label from the filename, load the image and
-			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
+
 			image = cv2.imread(imagePath)
 			frame = imutils.resize(image, width=600)
 			faces = faceCascade.detectMultiScale(
@@ -61,12 +61,11 @@ def get_images_raw() :
 				face = cv2.resize(face, (32, 32))
 				face = face.astype("float") / 255.0
 			
-			# update the data_features and labels lists, respectively
 			data.append(face)
 			if (label_name == 'ImposterRaw') :
-				labels.append(0)
+				labels.append([0])
 			else :
-				labels.append(1)
+				labels.append([1])
 				
 	return data,labels
 
@@ -80,23 +79,21 @@ def get_images_detected() :
 		print('Doing label: ' , label_name)
 		for imagePath in glob.iglob(f'../dataset/Detectedface/{label_name}/*/*.jpg'):
 			print(imagePath)
-			# extract the class label from the filename, load the image and
-			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
+	
 			image = cv2.imread(imagePath)
 			
-			# print(imagePath)
 			image = cv2.resize(image, (32, 32))
 			
-			# update the data_features and labels lists, respectively
 			data.append(image)
 			if (label_name == 'ImposterFace'):
-				labels.append(0)
+				labels.append([0])
 			else:
-				labels.append(1)
+				labels.append([1])
 				
 	return data,labels
 
 epochs = [5,10,25,40,50,60,85,100,150,200]
+# epochs = [1,2,3]
 
 dfObj = pd.DataFrame(columns=['epoch', 'Accuracy', 'Precision', 'Recall/TPR', 'f1', 'Kappa', 'Matt', 'TNR', 'FPR','train_time'])
 for EPOCHS in epochs:
@@ -106,28 +103,25 @@ for EPOCHS in epochs:
 	#%%
 	print(len(data))
 	#%%
-	# convert the data_features into a NumPy array, then preprocess it by scaling
-	# all pixel intensities to the range [0, 1]
+
 	data = np.array(data, dtype="float") / 255.0
-	
-	# encode the labels (which are currently strings) as integers and then
-	# one-hot encode them
-	le = LabelEncoder()
-	labels = le.fit_transform(labels)
-	labels = np_utils.to_categorical(labels, 2)
-	
+
+
+	enc = OneHotEncoder()
+	enc.fit(labels)
+	labels = enc.transform(labels).toarray()
 	
 	
+	#%%
 	# training data_features ( trainX ) and training labels ( trainY ).
 	(trainX, testX, trainY, testY) = train_test_split(data, labels,
 													  test_size=0.20, random_state=42)
 	
 	
 		
-	# apply data_features augmentation, randomly translating, rotating, resizing, etc. images on the fly.
-	# enabling our model to generalize better
+	
 	aug = ImageDataGenerator( rescale = 1./255,
-	                                   shear_range = 0.2,
+									   shear_range = 0.2,
 									   width_shift_range=0.2,
 									   height_shift_range=0.2,
 									   rotation_range=90,
@@ -135,24 +129,22 @@ for EPOCHS in epochs:
 									   zoom_range=[0.5,1.0],
 									   featurewise_center=True,
 									  featurewise_std_normalization=True,
-	                                   horizontal_flip = True,
-									    fill_mode="nearest")
+									   horizontal_flip = True,
+										fill_mode="nearest")
 	
 	#%%
 	
-	# initialize the optimizer and model
 	print("[INFO] compiling model...")
 	opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 	model = build(width=32, height=32, depth=3,
-							  classes=len(le.classes_))
+							  classes=2)
 
 	
 	model.add(LeakyReLU(alpha=0.3))
 	model.add(BatchNormalization())
 	model.add(Dropout(0.5))
 	
-	# softmax classifier
-	model.add(Dense(len(le.classes_)))
+	model.add(Dense(2))
 	model.add(Activation("softmax"))
 	
 	model.compile(loss="categorical_crossentropy", optimizer=opt,
@@ -163,7 +155,6 @@ for EPOCHS in epochs:
 	
 	#%%
 	
-	# train the network
 	print("[INFO] training network for {} epochs...".format(EPOCHS))
 	start = time.time()
 	H = model.fit_generator(aug.flow(trainX, trainY, batch_size=BS),
@@ -172,7 +163,6 @@ for EPOCHS in epochs:
 	finish = time.time()
 	
 	
-	# evaluate the network
 	print("[INFO] evaluating network...")
 	predictions = model.predict(testX, batch_size=BS)
 	

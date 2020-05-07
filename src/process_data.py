@@ -1,3 +1,10 @@
+"""
+To run file: type in a terminal python process_data.py
+To save the figure uncomment line 63
+The figure is saved to feature_extraction/imgs folder
+
+"""
+
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -53,5 +60,5 @@ plt.bar(items1, counts1, label="avg_live", width=0.4, transform=trans1+plt.gca()
 plt.bar(items2, counts2, label="avg_fake", width=0.4, transform=trans2+plt.gca().transData)
 plt.legend(fontsize = 15)
 plt.title("Real/fake features from original dataset",fontsize = 25)
-# plt.savefig(f'imgs/final_h.png', dpi=1500)
+# plt.savefig(f'../feature_extraction/imgs/final_h.png', dpi=1500)
 plt.show()

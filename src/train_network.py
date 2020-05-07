@@ -1,4 +1,8 @@
 
+"""
+To run file: type in a terminal python train_network.py
+
+"""
 import imutils
 import matplotlib
 matplotlib.use("Agg")
@@ -130,7 +134,7 @@ model.add(keras.layers.normalization.BatchNormalization())
 model.add(keras.layers.core.Dropout(0.5))
 
 
-# softmax classifier
+
 model.add(keras.layers.core.Dense(2))
 model.add(keras.layers.core.Activation("softmax"))
 
@@ -143,9 +147,8 @@ os.environ["PATH"] += os.pathsep + 'C:/Program Files (x86)/Graphviz2.38/bin/'
 plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
 #%%
-# train the network
+
 print("[INFO] training network for {} epochs...".format(EPOCHS))
-# fit generator is on infinite look so do steps per epoch to terminate it
 augm = aug.flow(trainX, trainY, batch_size=BS)
 H = model.fit_generator(augm,
 						validation_data=(testX, testY), steps_per_epoch=len(trainX) // BS,

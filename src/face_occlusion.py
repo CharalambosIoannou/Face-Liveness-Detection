@@ -1,10 +1,18 @@
+"""
+To run file: type in a terminal python face_occlusion.py
+Uncomment line 173 to run the code to reproduce the occluded datasets
+Uncomment line 174 to run a demo producing occluded images in the current directory
 
-from imutils import face_utils
-import numpy as np
-import imutils
-import dlib
-import cv2
+"""
 import glob
+
+import cv2
+import dlib
+import imutils
+import numpy as np
+from imutils import face_utils
+
+
 
 # code modified from https://www.pyimagesearch.com/2017/04/10/detect-eyes-nose-lips-jaw-dlib-opencv-python/
 
@@ -71,7 +79,6 @@ def run(occlude_part):
 		sub_dirs_imp = [x[0][-4:] for x in os.walk("../dataset/Detectedface/ImposterFace")][1:]
 		sub_dirs_client = [x[0][-4:] for x in os.walk("../dataset/Detectedface/ClientFace")][1:]
 		for i in sub_dirs_imp:
-			print("here")
 			print(i)
 			try:
 				os.mkdir(f'../dataset/{string}/'+label_name+ "/" + i)
@@ -79,7 +86,6 @@ def run(occlude_part):
 				continue
 				
 		for i in sub_dirs_client:
-			print("here1")
 			try:
 				os.mkdir(f'../dataset/{string}/'+label_name+ "/" + i)
 			except FileExistsError:
@@ -87,8 +93,6 @@ def run(occlude_part):
 		print("finished with dirs")
 		for imagePath in glob.iglob(f'../dataset/Detectedface/{label_name}/*/*.jpg'):
 			print(imagePath)
-			# extract the class label from the filename, load the image and
-			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
 			image = cv2.imread(imagePath)
 			try:
 				
@@ -124,15 +128,12 @@ def run_demo(occlude_part):
 		sub_dirs_imp = [x[0][-4:] for x in os.walk("../dataset/test_detectedface/ImposterFace")][1:]
 		sub_dirs_client = [x[0][-4:] for x in os.walk("../dataset/test_detectedface/ClientFace")][1:]
 		for i in sub_dirs_imp:
-			print("here")
-			print(i)
 			try:
 				os.mkdir(f'{string}/'+label_name+ "/" + i)
 			except FileExistsError:
 				continue
 				
 		for i in sub_dirs_client:
-			print("here1")
 			try:
 				os.mkdir(f'{string}/'+label_name+ "/" + i)
 			except FileExistsError:
@@ -141,8 +142,6 @@ def run_demo(occlude_part):
 		counter = 0
 		for imagePath in glob.iglob(f'../dataset/test_detectedface/{label_name}/*/*.jpg'):
 			print(imagePath)
-			# extract the class label from the filename, load the image and
-			# resize it to be a fixed 32x32 pixels, ignoring aspect ratio
 			image = cv2.imread(imagePath)
 			try:
 				
@@ -151,7 +150,6 @@ def run_demo(occlude_part):
 					output = occlude_region(output1,"right_eye") #133 not recongised
 				elif (occlude_part == "nose"):
 					if (counter < 18 and label_name =="ClientFace"):
-						print("skipping")
 						counter = counter + 1
 						continue
 					else:
@@ -167,4 +165,4 @@ def run_demo(occlude_part):
 
 
 # run()
-run_demo("nose")
+# run_demo("both_eyes")

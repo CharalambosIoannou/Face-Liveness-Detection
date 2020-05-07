@@ -44,9 +44,6 @@ This file creates a histogram of the real and fake features from the clear (not 
 ## run.bat
 Bat file used to run the program on Windows
 
-## run.sh
-Bash file used to run the program on Linux
-
 ## train_network.py
 The code to train the network and obtain evaluation metrics
 
