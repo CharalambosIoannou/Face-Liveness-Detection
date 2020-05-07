@@ -13,49 +13,45 @@
  ## Dependencies
  ----
  * Python 3.5+
- * Tensorflow
+ * imutils==0.5.3
+ * numpy==1.17.2
+ * matplotlib==3.1.1
+ * tensorflow==2.1.0
+ * pandas==0.25.2
+ * Keras==2.3.1
+ * opencv_python==4.1.1.26
+ * dlib==19.19.0
+ * scikit_learn==0.22.2.post1
 
- ## Folder and file structure
+ ## Folder structure
  ---
 ### **Folders:**
- ### face_occlusion/
- This folder contains a script which iterates through the dataset and occludes the specified facial feature. This outputs a folder with identical structure and data as the original dataset but with the occluded images. 
- 
- It also contains the file named "shape_predictor_68_face_landmarks.dat" which is used for face localization.
 
  ### dataset/
- This folder contains all of the datasets used for this project. It has a doogle drive link in order to download the datasets.
+ This folder should contain all of the datasets used for this project. It has a doogle drive link in order to download the datasets.
 
 ### feature_extraction/
- This folder contains the code to compare the occluded dataset with the original dataset. It also contains code to produce histograms of the orignal and occluded datasets
+ This folder contains the features extracted from the original and occluded datasets. It also contains a subfolder named "imgs" which contains images of histograms showing the difference between the different facial features.  
 
-### **Files:** 
-### gui.py
- This file is the graphical user interface of the project. It has two main functions. Run real time liveness detection or perform liveness detection for an input image
+### images/
+This folder contains images used for the project.
 
-###  liveness_from_photos.py
- This file performs liveness detection for an input image
+ ### src/
+ This folder contains all the code to run the system.
 
-###  liveness_from_video.py
- This file performs real time liveness detection using the laptop's camera
 
-### model_save.h5
-The saved model used to perform real time liveness detection fast
 
-### model_save.pickle
-The saved labels used to perform real time liveness detection fast
 
-### network.py
-The DCNN model used for liveness detection
 
-### train_network.py
-The code to train the network and obtain evaluation metrics
-
-### build_exe.bat
-Bat file used to run the program on Windows
 
 ## How to run
-Double click on "build_exe.bat" file when using Windows OS
+1) Install required dependencies using the command `pip install --user -r requirements.txt`. If this fails for some reason then do `pip install <library name>` on all the libraries mentioned above one by one.
+2) If you are using Windows navigate to src folder and click on `run.bat` file
+3) If you are using Linux navigate to src folder and click on `run.sh` file
+4) When the graphical user inteface opens there are two options:
+    * Perform real-time liveness detection which is going to open the laptop camera
+    * Perform liveness detection from an image you want to choose
+5) Press one of the buttons according to which liveness detection you want to carry out
 
  
 
